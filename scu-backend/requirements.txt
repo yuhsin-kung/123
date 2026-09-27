@@ -1,0 +1,8 @@
+# Django 5.2 是 LTS（長期支援到 2028-04）
+Django>=5.2,<6.0
+# 爬蟲用（crawl_timetable / crawl_rules / crawl_events / crawl_announcements）
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=5.0
+certifi>=2024.2.2
+# 行事曆 PDF 解析另外需要 poppler 的 pdftotext（不是 pip 套件，見 README；沒有也能跑 ICS 與公告）

@@ -1,0 +1,2 @@
+open http://127.0.0.1:7860
+127.0.0.1 - "GET /charts/5314_TWO_pv.png HTTP/1.1" 200 -

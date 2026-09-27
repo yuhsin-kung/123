@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+raw/
+logs/
+staticfiles/
+events/crawler/certs/ca_bundle.pem

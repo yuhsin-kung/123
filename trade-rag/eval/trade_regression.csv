@@ -1,0 +1,9 @@
+﻿id,question,expected_route,expected_sub,expected_file,notes
+R01,盤中破前高會不會成交？,trade,rules,RULE-001,data/eval/questions.md 第一批
+R02,台指期夜盤會不會進場？,trade,txf_night,,data/eval/questions.md 第一批
+R03,severe 熱度時新倉預算池是現金多少％？,trade,rules,RULE-002,data/eval/questions.md 第一批
+R04,普通關稅升溫是硬關還是減碼？,trade,rules,RULE-002,data/eval/questions.md 第一批
+R05,hot／severe 且當日收黑會怎樣？,trade,rules,RULE-003,data/eval/questions.md 第一批
+R06,hot／severe 但盤沒崩、也沒戰爭級？,trade,rules,RULE-003,data/eval/questions.md 第一批
+R07,預設先試幾股？買不起呢？,trade,rules,RULE-004,data/eval/questions.md 第一批
+R08,進場要破幾日高、SNR 門檻？,trade,rules,RULE-005,data/eval/questions.md 第一批

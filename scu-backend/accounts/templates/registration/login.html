@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>登入｜東吳學生新入口（示範）</title>
+<style>body{font-family:system-ui,"Microsoft JhengHei",sans-serif;max-width:360px;margin:60px auto;padding:0 16px}
+input{width:100%;padding:8px;margin:4px 0 12px;box-sizing:border-box}button{padding:8px 16px}.err{color:#b00}</style></head>
+<body>
+<h1>示範登入</h1>
+<p>示範帳號：<code>demo</code>／密碼：<code>demo1234</code>（王小明，資科三B）</p>
+{% if form.errors %}<p class="err">帳號或密碼錯誤。</p>{% endif %}
+<form method="post">{% csrf_token %}
+  <label>帳號 {{ form.username }}</label>
+  <label>密碼 {{ form.password }}</label>
+  <input type="hidden" name="next" value="{{ next }}">
+  <button type="submit">登入</button>
+</form>
+{% if user.is_authenticated %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<p>目前登入：{{ user.username }} <button>登出</button></p></form>{% endif %}
+<p><a href="/">回首頁</a></p>
+</body></html>

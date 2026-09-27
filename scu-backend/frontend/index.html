@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>東吳學生新入口｜Django 後端（佔位頁）</title>
+<style>body{font-family:system-ui,"Microsoft JhengHei",sans-serif;max-width:760px;margin:40px auto;padding:0 16px;line-height:1.6}
+code{background:#f3f3f3;padding:1px 4px;border-radius:3px}li{margin:2px 0}</style></head>
+<body>
+<h1>東吳學生新入口：Django 後端</h1>
+<p>這是<strong>佔位頁</strong>。前端網站（scu-portal-demo）改成呼叫 API 之後，執行
+<code>python manage.py sync_frontend --src ..\scu-portal-demo</code> 就會用真正的入口網站取代這一頁。</p>
+<h2>可以直接點的 API</h2>
+<ul>
+<li><a href="/api/profile">/api/profile</a>：示範學生（王小明）</li>
+<li><a href="/api/programs">/api/programs</a>、<a href="/api/departments?program=學士班">/api/departments?program=學士班</a>、<a href="/api/classes?dept=資料科學系">/api/classes?dept=資料科學系</a></li>
+<li><a href="/api/class-timetable?program=學士班&dept=資料科學系&grade=3&cls=B">/api/class-timetable?…資科三B</a></li>
+<li><a href="/api/courses?dept=資料科學系&grade=3">/api/courses?dept=資料科學系&amp;grade=3</a>、<a href="/api/courses?day=3&period=5-9&eligible=1">星期三下午我可以修的課</a></li>
+<li><a href="/api/events">/api/events</a>、<a href="/api/news">/api/news</a></li>
+<li><a href="/api/selection/window">/api/selection/window</a>（<a href="/api/selection/window?at=2026-09-17T21:00">預覽 9/17 21:00</a>）</li>
+<li><a href="/api/cart">/api/cart</a>、<a href="/api/me/timetable">/api/me/timetable</a></li>
+<li>前端相容格式：<a href="/api/bundle/courses">/api/bundle/courses</a>（= real-courses.js）、<a href="/api/bundle/classes">/api/bundle/classes</a>、<a href="/api/bundle/events">/api/bundle/events</a></li>
+</ul>
+<p><a href="/admin/">資料庫管理（/admin/）</a>｜<a href="/accounts/login/">示範登入</a></p>
+</body></html>

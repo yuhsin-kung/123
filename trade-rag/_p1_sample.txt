@@ -1,0 +1,8 @@
+Q: 什麼情況不能開新倉
+mode=MMR+keyword  store=trade  top_k=3
+#1 store=trade  final=0.5732  faiss=0.5732  kw_bonus=0.000
+  RULE-003_hard_stop.md / 1. 目的
+#2 store=trade  final=0.4844  faiss=0.4844  kw_bonus=0.000
+  RULE-003_hard_stop.md / 4. 注意
+#3 store=trade  final=0.4728  faiss=0.4728  kw_bonus=0.000
+  RULE-005_entry_exit.md / 4. 注意

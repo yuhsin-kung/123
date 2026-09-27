@@ -1,0 +1,40 @@
+﻿id,category,question,history_json,expected_route,expected_sub,expected_keywords,expected_source,notes
+T01,trade,個股簡報,,trade,holdings_brief,持倉個股簡報,,chip：全部持倉簡報
+T02,trade,世紀現況,,trade,stock_brief,5314,,過去曾誤判成規則 RAG（5314.TWO 世紀）
+T03,trade,5314今天的狀態,,trade,stock_brief,5314,,代號沒空格；舊 resolve_ticker 抓不到 → 路由器補代號
+T04,trade,今天帳戶跟盤勢怎麼樣？,,trade,live,現金,,chip：今日盤勢
+T05,trade,今天三大法人怎麼看？,,trade,institutional,三大法人,,
+T06,trade,夜盤可以進場嗎？,,trade,txf_night,夜盤,,chip：夜盤
+T07,trade,severe 熱度時新倉預算池是現金多少％？,,trade,rules,2%|2％,RULE-002,chip：預算池（規則 RAG，靠打分）
+T08,trade,硬關跟軟關差在哪？,,trade,rules,硬關,RULE-003,chip：硬／軟關（規則 RAG，靠打分）
+T09,trade,預設先試幾股？買不起呢？,,trade,rules,5|五,RULE-004,規則 RAG，靠打分
+T10,trade,普通關稅升溫是硬關還是減碼？,,trade,rules,減碼|縮池,RULE-002,規則 RAG，靠打分
+S01,school,今天有什麼課？,,school,my_timetable,行為資料科學;金融科技與智能交易,,完整回答評測需 TRADE_RAG_DEMO_NOW=2026-09-30T10:30；預設已改跟系統時間
+S02,school,選課什麼時候？,,school,selection_window,即時退選;確認選課清單,,
+S03,school,期末退修日期是什麼時候？,,school,holiday,11/30|11月30,,行事曆事件走 SQL，不經 RAG
+S04,school,資科三B 星期三有什麼課？,,school,class_timetable,行為資料科學;GA應用與網站數據分析;金融科技與智能交易,,班級課表 SQL
+S05,school,最新公告有哪些？,,school,news,創創基地,,
+S06,school,期中考是哪幾天？,,school,holiday,11/9|11月9,,行事曆事件走 SQL，不經 RAG
+S07,school,教師節有放假嗎？,,school,holiday,9/28|9月28,,放假走 SQL 對日期，不經 RAG
+S08,school,資料探勘導論是誰教的？在哪間教室？,,school,course_lookup,葉向原;H109,,課名＋查詢詞 → SQL
+S09,school,現在還能加退選嗎？,,school,selection_window,不是選課時段,,含「現在」但不是交易
+S10,school,有沒有獎學金相關的公告？,,school,news,麗陽|助學金|獎,,
+G01,general,你好，你是誰？,,general,chat,,,
+G02,general,用簡單的例子解釋什麼是遞迴,,general,chat,遞迴,,
+G03,general,二元搜尋的時間複雜度是多少？,,general,chat,log,,
+G04,general,推薦幾本適合大學生看的小說,,general,chat,,,
+G05,general,我最近壓力好大，睡不好怎麼辦？,,general,chat,睡,,
+G06,general,幫我把「今天天氣很好」翻成英文,,general,chat,weather,,含「今天」但不是交易
+G07,general,什麼是梯度下降？,,general,chat,梯度,,
+G08,general,寫一首關於秋天的短詩,,general,chat,秋,,
+G09,general,SQL 的 JOIN 有哪幾種？,,general,chat,JOIN,,
+G10,general,Python 的 list 和 tuple 差在哪？,,general,chat,tuple,,
+C01,clarify,世紀有什麼課？,,clarify,,？,,股票名＋學校結構化 → 反問
+C02,clarify,期末考前可以進場嗎？,,clarify,,？,,交易＋學校訊號衝突
+C03,clarify,今天怎麼樣？,,clarify,,？,,太模糊
+C04,clarify,漢唐盛世指的是哪個時代？,,clarify,,？,,漢唐是自選股名，但像歷史題
+C05,clarify,規則是什麼？,,clarify,,？,,交易規則還是選課規則
+F01,followup,那星期四呢？,"[{""role"": ""user"", ""content"": ""資科三B 星期三有什麼課？""}, {""role"": ""assistant"", ""content"": ""資科三B 班級課表｜星期三 …"", ""route"": ""school""}]",school,class_timetable,資料探勘導論;社群網路分析導論,,主題延續＋沿用班級
+F02,followup,那它的新聞呢？,"[{""role"": ""user"", ""content"": ""世紀現況""}, {""role"": ""assistant"", ""content"": ""【摘要】5314.TWO 世紀 …"", ""route"": ""trade""}]",trade,stock_brief,5314,,主題延續＋沿用股票
+F03,followup,那它跟迴圈差在哪？,"[{""role"": ""user"", ""content"": ""什麼是遞迴？""}, {""role"": ""assistant"", ""content"": ""遞迴就是函式呼叫自己…""}]",general,chat,迴圈,,history 沒帶 route，靠重算上一句
+F04,followup,學校,"[{""role"": ""user"", ""content"": ""世紀有什麼課？""}, {""role"": ""assistant"", ""content"": ""你是想問股票的「世紀」，還是學校的事？（回覆「股票」、「學校」或「一般」即可）"", ""route"": ""clarify""}]",school,my_timetable,行為資料科學,,回覆反問 → 重跑原問題

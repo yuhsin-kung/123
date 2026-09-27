@@ -1,0 +1,5 @@
+[pid:9800] 2026-09-10T05:42:01.064325Z  INFO shioaji::api::api_v1::auth::token_login: No cached token available, performing new login
+[pid:9800] 2026-09-10T05:42:01.369593Z  INFO shioaji::api::api_v1::auth::token_login: Stored new token in slot 2
+[pid:9800] 2026-09-10T05:42:01.506833Z  INFO shioaji::api::token_pool: Removed invalid token from slot 2
+[pid:9800] 2026-09-10T05:42:01.507630Z  INFO shioaji::api: msg receiver error: Closed
+[pid:9800] 2026-09-10T05:42:01.507632Z  INFO shioaji::api: P2P receiver closed: Closed

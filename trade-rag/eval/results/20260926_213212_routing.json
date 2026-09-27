@@ -1,0 +1,1087 @@
+{
+  "summary": {
+    "kind": "routing",
+    "n": 39,
+    "ts": "2026-09-26T21:32:12",
+    "routing_accuracy": 0.8462,
+    "routing_plus_sub_accuracy": 0.8462,
+    "by_category": {
+      "clarify": "3/5",
+      "followup": "3/4",
+      "general": "7/10",
+      "school": "10/10",
+      "trade": "10/10"
+    },
+    "routing_failures": [
+      "G02 用簡單的例子解釋什麼是遞迴 → school/rag (expected general/chat)",
+      "G06 幫我把「今天天氣很好」翻成英文 → school/rag (expected general/chat)",
+      "G07 什麼是梯度下降？ → school/rag (expected general/chat)",
+      "C02 期末考前可以進場嗎？ → school/rag (expected clarify/)",
+      "C03 今天怎麼樣？ → trade/live (expected clarify/)",
+      "F03 那它跟迴圈差在哪？ → school/rag (expected general/chat)"
+    ]
+  },
+  "results": [
+    {
+      "id": "T01",
+      "category": "trade",
+      "question": "個股簡報",
+      "expected_route": "trade",
+      "expected_sub": "holdings_brief",
+      "route": "trade",
+      "sub": "holdings_brief",
+      "stage": "hard_trade",
+      "reason": "個股簡報關鍵字",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 6106.6
+    },
+    {
+      "id": "T02",
+      "category": "trade",
+      "question": "世紀現況",
+      "expected_route": "trade",
+      "expected_sub": "stock_brief",
+      "route": "trade",
+      "sub": "stock_brief",
+      "stage": "entity",
+      "reason": "股票實體 5314.TWO 世紀",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.9
+    },
+    {
+      "id": "T03",
+      "category": "trade",
+      "question": "5314今天的狀態",
+      "expected_route": "trade",
+      "expected_sub": "stock_brief",
+      "route": "trade",
+      "sub": "stock_brief",
+      "stage": "entity",
+      "reason": "股票實體 5314.TWO 世紀",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.6
+    },
+    {
+      "id": "T04",
+      "category": "trade",
+      "question": "今天帳戶跟盤勢怎麼樣？",
+      "expected_route": "trade",
+      "expected_sub": "live",
+      "route": "trade",
+      "sub": "live",
+      "stage": "hard_trade",
+      "reason": "帳戶／持倉／盤勢關鍵字",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.5
+    },
+    {
+      "id": "T05",
+      "category": "trade",
+      "question": "今天三大法人怎麼看？",
+      "expected_route": "trade",
+      "expected_sub": "institutional",
+      "route": "trade",
+      "sub": "institutional",
+      "stage": "hard_trade",
+      "reason": "行情關鍵字「三大法人」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.4
+    },
+    {
+      "id": "T06",
+      "category": "trade",
+      "question": "夜盤可以進場嗎？",
+      "expected_route": "trade",
+      "expected_sub": "txf_night",
+      "route": "trade",
+      "sub": "txf_night",
+      "stage": "hard_trade",
+      "reason": "行情關鍵字「夜盤」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.7
+    },
+    {
+      "id": "T07",
+      "category": "trade",
+      "question": "severe 熱度時新倉預算池是現金多少％？",
+      "expected_route": "trade",
+      "expected_sub": "rules",
+      "route": "trade",
+      "sub": "rules",
+      "stage": "scores",
+      "reason": "trade margin +0.231 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.7313,
+          "thr": 0.5,
+          "margin": 0.2313,
+          "best": "預算池比例怎麼算"
+        },
+        "school": {
+          "sim": 0.5217,
+          "thr": 0.5,
+          "margin": 0.0217,
+          "best": "學雜費繳費截止日"
+        },
+        "general": {
+          "sim": 0.2695,
+          "thr": 0.55,
+          "margin": -0.2805,
+          "best": "統計學的標準差是什麼意思"
+        }
+      },
+      "route_ms": 1560.0
+    },
+    {
+      "id": "T08",
+      "category": "trade",
+      "question": "硬關跟軟關差在哪？",
+      "expected_route": "trade",
+      "expected_sub": "rules",
+      "route": "trade",
+      "sub": "rules",
+      "stage": "scores",
+      "reason": "trade margin +0.136 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.6356,
+          "thr": 0.5,
+          "margin": 0.1356,
+          "best": "軟關最多可以新開幾檔"
+        },
+        "school": {
+          "sim": 0.4612,
+          "thr": 0.5,
+          "margin": -0.0388,
+          "best": "限修是什麼意思"
+        },
+        "general": {
+          "sim": 0.4234,
+          "thr": 0.55,
+          "margin": -0.1266,
+          "best": "考試壓力大怎麼辦"
+        }
+      },
+      "route_ms": 16.6
+    },
+    {
+      "id": "T09",
+      "category": "trade",
+      "question": "預設先試幾股？買不起呢？",
+      "expected_route": "trade",
+      "expected_sub": "rules",
+      "route": "trade",
+      "sub": "rules",
+      "stage": "scores",
+      "reason": "trade margin +0.270 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.7698,
+          "thr": 0.5,
+          "margin": 0.2698,
+          "best": "零股要先買幾股"
+        },
+        "school": {
+          "sim": 0.3842,
+          "thr": 0.5,
+          "margin": -0.1158,
+          "best": "學雜費繳費截止日"
+        },
+        "general": {
+          "sim": 0.2693,
+          "thr": 0.55,
+          "margin": -0.2807,
+          "best": "面試要注意什麼"
+        }
+      },
+      "route_ms": 13.0
+    },
+    {
+      "id": "T10",
+      "category": "trade",
+      "question": "普通關稅升溫是硬關還是減碼？",
+      "expected_route": "trade",
+      "expected_sub": "rules",
+      "route": "trade",
+      "sub": "rules",
+      "stage": "scores",
+      "reason": "trade margin +0.168 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.6682,
+          "thr": 0.5,
+          "margin": 0.1682,
+          "best": "關稅新聞會不會影響開倉"
+        },
+        "school": {
+          "sim": 0.4353,
+          "thr": 0.5,
+          "margin": -0.0647,
+          "best": "限修是什麼意思"
+        },
+        "general": {
+          "sim": 0.4212,
+          "thr": 0.55,
+          "margin": -0.1288,
+          "best": "統計學的標準差是什麼意思"
+        }
+      },
+      "route_ms": 13.7
+    },
+    {
+      "id": "S01",
+      "category": "school",
+      "question": "今天有什麼課？",
+      "expected_route": "school",
+      "expected_sub": "my_timetable",
+      "route": "school",
+      "sub": "my_timetable",
+      "stage": "hard_school",
+      "reason": "學校結構化關鍵字「有什麼課」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 7.4
+    },
+    {
+      "id": "S02",
+      "category": "school",
+      "question": "選課什麼時候？",
+      "expected_route": "school",
+      "expected_sub": "selection_window",
+      "route": "school",
+      "sub": "selection_window",
+      "stage": "hard_school",
+      "reason": "學校結構化關鍵字「選課」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.6
+    },
+    {
+      "id": "S03",
+      "category": "school",
+      "question": "期末退修日期是什麼時候？",
+      "expected_route": "school",
+      "expected_sub": "rag",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.209 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.4185,
+          "thr": 0.5,
+          "margin": -0.0815,
+          "best": "3. 規則"
+        },
+        "school": {
+          "sim": 0.7089,
+          "thr": 0.5,
+          "margin": 0.2089,
+          "best": "期末退修"
+        },
+        "general": {
+          "sim": 0.4041,
+          "thr": 0.55,
+          "margin": -0.1459,
+          "best": "時間管理的方法"
+        }
+      },
+      "route_ms": 13.2
+    },
+    {
+      "id": "S04",
+      "category": "school",
+      "question": "資科三B 星期三有什麼課？",
+      "expected_route": "school",
+      "expected_sub": "class_timetable",
+      "route": "school",
+      "sub": "class_timetable",
+      "stage": "hard_school",
+      "reason": "班級「資科三B」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.6
+    },
+    {
+      "id": "S05",
+      "category": "school",
+      "question": "最新公告有哪些？",
+      "expected_route": "school",
+      "expected_sub": "news",
+      "route": "school",
+      "sub": "news",
+      "stage": "hard_school",
+      "reason": "學校結構化關鍵字「公告」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.3
+    },
+    {
+      "id": "S06",
+      "category": "school",
+      "question": "期中考是哪幾天？",
+      "expected_route": "school",
+      "expected_sub": "rag",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.352 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3992,
+          "thr": 0.5,
+          "margin": -0.1008,
+          "best": "出場條件是什麼"
+        },
+        "school": {
+          "sim": 0.8518,
+          "thr": 0.5,
+          "margin": 0.3518,
+          "best": "英檢考試日期"
+        },
+        "general": {
+          "sim": 0.4315,
+          "thr": 0.55,
+          "margin": -0.1185,
+          "best": "時間管理的方法"
+        }
+      },
+      "route_ms": 11.5
+    },
+    {
+      "id": "S07",
+      "category": "school",
+      "question": "教師節有放假嗎？",
+      "expected_route": "school",
+      "expected_sub": "rag",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.419 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.2348,
+          "thr": 0.5,
+          "margin": -0.2652,
+          "best": "今天可以開幾檔新倉"
+        },
+        "school": {
+          "sim": 0.9189,
+          "thr": 0.5,
+          "margin": 0.4189,
+          "best": "教師節放假"
+        },
+        "general": {
+          "sim": 0.2688,
+          "thr": 0.55,
+          "margin": -0.2812,
+          "best": "旅行景點推薦"
+        }
+      },
+      "route_ms": 12.6
+    },
+    {
+      "id": "S08",
+      "category": "school",
+      "question": "資料探勘導論是誰教的？在哪間教室？",
+      "expected_route": "school",
+      "expected_sub": "course_lookup",
+      "route": "school",
+      "sub": "course_lookup",
+      "stage": "hard_school",
+      "reason": "課名「資料探勘導論」＋查詢詞",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.8
+    },
+    {
+      "id": "S09",
+      "category": "school",
+      "question": "現在還能加退選嗎？",
+      "expected_route": "school",
+      "expected_sub": "selection_window",
+      "route": "school",
+      "sub": "selection_window",
+      "stage": "hard_school",
+      "reason": "學校結構化關鍵字「加退選」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.4
+    },
+    {
+      "id": "S10",
+      "category": "school",
+      "question": "有沒有獎學金相關的公告？",
+      "expected_route": "school",
+      "expected_sub": "news",
+      "route": "school",
+      "sub": "news",
+      "stage": "hard_school",
+      "reason": "學校結構化關鍵字「公告」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.4
+    },
+    {
+      "id": "G01",
+      "category": "general",
+      "question": "你好，你是誰？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.382 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3241,
+          "thr": 0.5,
+          "margin": -0.1759,
+          "best": "我的持股狀況"
+        },
+        "school": {
+          "sim": 0.3558,
+          "thr": 0.5,
+          "margin": -0.1442,
+          "best": "衝堂怎麼辦"
+        },
+        "general": {
+          "sim": 0.9325,
+          "thr": 0.55,
+          "margin": 0.3825,
+          "best": "你好，你是誰？可以介紹一下自己嗎"
+        }
+      },
+      "route_ms": 12.5
+    },
+    {
+      "id": "G02",
+      "category": "general",
+      "question": "用簡單的例子解釋什麼是遞迴",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.054 最高",
+      "route_ok": false,
+      "sub_ok": false,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.4781,
+          "thr": 0.5,
+          "margin": -0.0219,
+          "best": "1. 目的"
+        },
+        "school": {
+          "sim": 0.5545,
+          "thr": 0.5,
+          "margin": 0.0545,
+          "best": "限修是什麼意思"
+        },
+        "general": {
+          "sim": 0.5742,
+          "thr": 0.55,
+          "margin": 0.0242,
+          "best": "幫我解釋一個程式設計的觀念"
+        }
+      },
+      "route_ms": 11.9
+    },
+    {
+      "id": "G03",
+      "category": "general",
+      "question": "二元搜尋的時間複雜度是多少？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.159 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.4472,
+          "thr": 0.5,
+          "margin": -0.0528,
+          "best": "單檔部位上限是多少"
+        },
+        "school": {
+          "sim": 0.411,
+          "thr": 0.5,
+          "margin": -0.089,
+          "best": "學分上限是多少"
+        },
+        "general": {
+          "sim": 0.709,
+          "thr": 0.55,
+          "margin": 0.159,
+          "best": "演算法的時間複雜度怎麼算"
+        }
+      },
+      "route_ms": 11.6
+    },
+    {
+      "id": "G04",
+      "category": "general",
+      "question": "推薦幾本適合大學生看的小說",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.154 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.2919,
+          "thr": 0.5,
+          "margin": -0.2081,
+          "best": "4. 注意"
+        },
+        "school": {
+          "sim": 0.507,
+          "thr": 0.5,
+          "margin": 0.007,
+          "best": "我這學期修了哪些課"
+        },
+        "general": {
+          "sim": 0.7038,
+          "thr": 0.55,
+          "margin": 0.1538,
+          "best": "推薦一本書"
+        }
+      },
+      "route_ms": 12.5
+    },
+    {
+      "id": "G05",
+      "category": "general",
+      "question": "我最近壓力好大，睡不好怎麼辦？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.173 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.2635,
+          "thr": 0.5,
+          "margin": -0.2365,
+          "best": "3. 規則"
+        },
+        "school": {
+          "sim": 0.2473,
+          "thr": 0.5,
+          "margin": -0.2527,
+          "best": "宿舍進住時間"
+        },
+        "general": {
+          "sim": 0.7233,
+          "thr": 0.55,
+          "margin": 0.1733,
+          "best": "怎麼改善睡眠品質"
+        }
+      },
+      "route_ms": 12.5
+    },
+    {
+      "id": "G06",
+      "category": "general",
+      "question": "幫我把「今天天氣很好」翻成英文",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.026 最高",
+      "route_ok": false,
+      "sub_ok": false,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.4548,
+          "thr": 0.5,
+          "margin": -0.0452,
+          "best": "今天可以開幾檔新倉"
+        },
+        "school": {
+          "sim": 0.5264,
+          "thr": 0.5,
+          "margin": 0.0264,
+          "best": "補班日(照常上班)"
+        },
+        "general": {
+          "sim": 0.5448,
+          "thr": 0.55,
+          "margin": -0.0052,
+          "best": "英文文法問題"
+        }
+      },
+      "route_ms": 13.9
+    },
+    {
+      "id": "G07",
+      "category": "general",
+      "question": "什麼是梯度下降？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.084 最高",
+      "route_ok": false,
+      "sub_ok": false,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.4761,
+          "thr": 0.5,
+          "margin": -0.0239,
+          "best": "盤中突破會直接下單嗎"
+        },
+        "school": {
+          "sim": 0.5844,
+          "thr": 0.5,
+          "margin": 0.0844,
+          "best": "限修是什麼意思"
+        },
+        "general": {
+          "sim": 0.4298,
+          "thr": 0.55,
+          "margin": -0.1202,
+          "best": "統計學的標準差是什麼意思"
+        }
+      },
+      "route_ms": 12.7
+    },
+    {
+      "id": "G08",
+      "category": "general",
+      "question": "寫一首關於秋天的短詩",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.238 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.2799,
+          "thr": 0.5,
+          "margin": -0.2201,
+          "best": "今天可以開幾檔新倉"
+        },
+        "school": {
+          "sim": 0.5391,
+          "thr": 0.5,
+          "margin": 0.0391,
+          "best": "中秋節放假"
+        },
+        "general": {
+          "sim": 0.7884,
+          "thr": 0.55,
+          "margin": 0.2384,
+          "best": "寫一首詩"
+        }
+      },
+      "route_ms": 12.3
+    },
+    {
+      "id": "G09",
+      "category": "general",
+      "question": "SQL 的 JOIN 有哪幾種？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.195 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3279,
+          "thr": 0.5,
+          "margin": -0.1721,
+          "best": "出場條件是什麼"
+        },
+        "school": {
+          "sim": 0.2886,
+          "thr": 0.5,
+          "margin": -0.2114,
+          "best": "初選選課結果查詢"
+        },
+        "general": {
+          "sim": 0.7447,
+          "thr": 0.55,
+          "margin": 0.1947,
+          "best": "資料庫 SQL 語法"
+        }
+      },
+      "route_ms": 12.0
+    },
+    {
+      "id": "G10",
+      "category": "general",
+      "question": "Python 的 list 和 tuple 差在哪？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "general",
+      "sub": "chat",
+      "stage": "scores",
+      "reason": "general margin +0.032 最高",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3465,
+          "thr": 0.5,
+          "margin": -0.1535,
+          "best": "1. 目的"
+        },
+        "school": {
+          "sim": 0.2985,
+          "thr": 0.5,
+          "margin": -0.2015,
+          "best": "班級課表"
+        },
+        "general": {
+          "sim": 0.5818,
+          "thr": 0.55,
+          "margin": 0.0318,
+          "best": "這段 Python 程式碼為什麼會出錯"
+        }
+      },
+      "route_ms": 12.3
+    },
+    {
+      "id": "C01",
+      "category": "clarify",
+      "question": "世紀有什麼課？",
+      "expected_route": "clarify",
+      "expected_sub": "",
+      "route": "clarify",
+      "sub": null,
+      "stage": "entity_conflict",
+      "reason": "股票實體 世紀 ＋ 學校結構化關鍵字「有什麼課」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.7
+    },
+    {
+      "id": "C02",
+      "category": "clarify",
+      "question": "期末考前可以進場嗎？",
+      "expected_route": "clarify",
+      "expected_sub": "",
+      "route": "school",
+      "sub": "rag",
+      "stage": "scores",
+      "reason": "school margin +0.171 最高",
+      "route_ok": false,
+      "sub_ok": true,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.5001,
+          "thr": 0.5,
+          "margin": 0.0001,
+          "best": "出場條件是什麼"
+        },
+        "school": {
+          "sim": 0.671,
+          "thr": 0.5,
+          "margin": 0.171,
+          "best": "畢業學期考試請假補考"
+        },
+        "general": {
+          "sim": 0.3905,
+          "thr": 0.55,
+          "margin": -0.1595,
+          "best": "考試壓力大怎麼辦"
+        }
+      },
+      "route_ms": 12.1
+    },
+    {
+      "id": "C03",
+      "category": "clarify",
+      "question": "今天怎麼樣？",
+      "expected_route": "clarify",
+      "expected_sub": "",
+      "route": "trade",
+      "sub": "live",
+      "stage": "scores",
+      "reason": "trade margin +0.010 最高",
+      "route_ok": false,
+      "sub_ok": true,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.5102,
+          "thr": 0.5,
+          "margin": 0.0102,
+          "best": "今天可以開幾檔新倉"
+        },
+        "school": {
+          "sim": 0.4925,
+          "thr": 0.5,
+          "margin": -0.0075,
+          "best": "開國紀念日放假"
+        },
+        "general": {
+          "sim": 0.5159,
+          "thr": 0.55,
+          "margin": -0.0341,
+          "best": "今天心情不太好，想找人聊聊"
+        }
+      },
+      "route_ms": 11.8
+    },
+    {
+      "id": "C04",
+      "category": "clarify",
+      "question": "漢唐盛世指的是哪個時代？",
+      "expected_route": "clarify",
+      "expected_sub": "",
+      "route": "clarify",
+      "sub": null,
+      "stage": "entity_ambiguous",
+      "reason": "股票實體 漢唐 但其餘文字「盛世指是哪個時代」看起來不是在問股票",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3465,
+          "thr": 0.5,
+          "margin": -0.1535,
+          "best": "1. 目的"
+        },
+        "school": {
+          "sim": 0.4151,
+          "thr": 0.5,
+          "margin": -0.0849,
+          "best": "115學年度第1學期結束"
+        },
+        "general": {
+          "sim": 0.6356,
+          "thr": 0.55,
+          "margin": 0.0856,
+          "best": "歷史事件的背景"
+        }
+      },
+      "route_ms": 13.2
+    },
+    {
+      "id": "C05",
+      "category": "clarify",
+      "question": "規則是什麼？",
+      "expected_route": "clarify",
+      "expected_sub": "",
+      "route": "clarify",
+      "sub": null,
+      "stage": "scores",
+      "reason": "trade 與 school 都過門檻且差距 0.025 < 0.04",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.6494,
+          "thr": 0.5,
+          "margin": 0.1494,
+          "best": "停損規則怎麼設定"
+        },
+        "school": {
+          "sim": 0.6244,
+          "thr": 0.5,
+          "margin": 0.1244,
+          "best": "限修是什麼意思"
+        },
+        "general": {
+          "sim": 0.4797,
+          "thr": 0.55,
+          "margin": -0.0703,
+          "best": "英文文法問題"
+        }
+      },
+      "route_ms": 12.7
+    },
+    {
+      "id": "F01",
+      "category": "followup",
+      "question": "那星期四呢？",
+      "expected_route": "school",
+      "expected_sub": "class_timetable",
+      "route": "school",
+      "sub": "class_timetable",
+      "stage": "continuation",
+      "reason": "school margin +0.116 最高（含延續加權 +0.1）",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {
+        "trade": {
+          "sim": 0.3957,
+          "thr": 0.5,
+          "margin": -0.1043,
+          "best": "4. 注意"
+        },
+        "school": {
+          "sim": 0.5159,
+          "thr": 0.5,
+          "margin": 0.0159,
+          "best": "什麼時候放假"
+        },
+        "general": {
+          "sim": 0.3959,
+          "thr": 0.55,
+          "margin": -0.1541,
+          "best": "講一個笑話"
+        }
+      },
+      "route_ms": 12.6
+    },
+    {
+      "id": "F02",
+      "category": "followup",
+      "question": "那它的新聞呢？",
+      "expected_route": "trade",
+      "expected_sub": "stock_brief",
+      "route": "trade",
+      "sub": "stock_brief",
+      "stage": "entity",
+      "reason": "股票實體 5314.TWO 世紀",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 1.2
+    },
+    {
+      "id": "F03",
+      "category": "followup",
+      "question": "那它跟迴圈差在哪？",
+      "expected_route": "general",
+      "expected_sub": "chat",
+      "route": "school",
+      "sub": "rag",
+      "stage": "continuation",
+      "reason": "school margin +0.111 最高（含延續加權 +0.1）",
+      "route_ok": false,
+      "sub_ok": false,
+      "ok": false,
+      "scores": {
+        "trade": {
+          "sim": 0.5396,
+          "thr": 0.5,
+          "margin": 0.0396,
+          "best": "盤中突破會直接下單嗎"
+        },
+        "school": {
+          "sim": 0.5106,
+          "thr": 0.5,
+          "margin": 0.0106,
+          "best": "衝堂怎麼辦"
+        },
+        "general": {
+          "sim": 0.3606,
+          "thr": 0.55,
+          "margin": -0.1894,
+          "best": "什麼是區塊鏈"
+        }
+      },
+      "route_ms": 23.2
+    },
+    {
+      "id": "F04",
+      "category": "followup",
+      "question": "學校",
+      "expected_route": "school",
+      "expected_sub": "my_timetable",
+      "route": "school",
+      "sub": "my_timetable",
+      "stage": "clarify_reply",
+      "reason": "使用者回覆「學校」→ school，重跑原問題「世紀有什麼課？」",
+      "route_ok": true,
+      "sub_ok": true,
+      "ok": true,
+      "scores": {},
+      "route_ms": 0.1
+    }
+  ]
+}

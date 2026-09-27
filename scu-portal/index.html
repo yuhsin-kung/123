@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8b1a1a">
+  <title>東吳學生新入口</title>
+  <link rel="icon" href="img/scu-logo.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 頁首：品牌、桌機版導覽列、登入學生、示範資料標章 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#/home" aria-label="東吳學生新入口 首頁">
+        <img class="brand-logo" src="img/scu-logo.png" alt="">
+        <span class="brand-name">東吳學生新入口</span>
+      </a>
+      <nav class="topnav" aria-label="主要頁面">
+        <a href="#/home" data-tab="home">首頁</a>
+        <a href="#/timetable" data-tab="timetable">課表</a>
+        <a href="#/course" data-tab="course">選課<span class="cart-badge" hidden></span></a>
+        <a href="#/grades" data-tab="grades">成績</a>
+        <a href="#/calendar" data-tab="calendar">行事曆</a>
+        <a href="#/more" data-tab="more">更多</a>
+      </nav>
+      <div class="top-right">
+        <a id="who" class="who" href="#/p/profile"></a>
+        <button class="demo-badge" type="button" data-act="demo-badge" title="本網站所有資料皆為示範資料">示範資料</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="view" class="container" tabindex="-1"></main>
+
+  <footer class="footer container">
+    <p>東吳學生新入口・黑客松原型｜課程、成績、日期皆為<b>示範資料</b>，不連接學校系統。</p>
+  </footer>
+
+  <!-- 手機版底部分頁列 -->
+  <nav class="tabbar" aria-label="主要頁面">
+    <a href="#/home" data-tab="home"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span>首頁</span></a>
+    <a href="#/timetable" data-tab="timetable"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM3 9h18M9 4v17M15 4v17"/></svg><span>課表</span></a>
+    <a href="#/course" data-tab="course"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M12 7v6M9 10h6"/></svg><span>選課</span><span class="cart-badge" hidden></span></a>
+    <a href="#/grades" data-tab="grades"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/></svg><span>成績</span></a>
+    <a href="#/more" data-tab="more" data-also="calendar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg><span>更多</span></a>
+  </nav>
+
+  <!-- 阿斯拉助手 -->
+  <button id="asla-fab" class="asla-fab" type="button" aria-controls="asla-panel" aria-expanded="false" aria-label="問阿斯拉">
+    <span class="asla-avatar">阿</span>
+  </button>
+  <section id="asla-panel" class="asla-panel" aria-label="阿斯拉助手" hidden>
+    <div class="asla-head">
+      <span class="asla-avatar">阿</span>
+      <div><b>阿斯拉</b><small>站內導覽＋語言模型</small></div>
+      <button id="asla-close" class="asla-close" type="button" aria-label="關閉"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div id="asla-log" class="asla-log" aria-live="polite"></div>
+    <div id="asla-chips" class="asla-chips"></div>
+    <form id="asla-form" class="asla-form" autocomplete="off">
+      <input id="asla-input" type="text" placeholder="例如：今天有什麼課、期中退選在哪" aria-label="輸入問題">
+      <button class="btn btn-primary" type="submit">送出</button>
+    </form>
+  </section>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <!-- 載入順序：設定 → 身分 → 示範資料 → 資料存取層 → 核心 → 各頁面 → 阿斯拉 → 啟動 -->
+  <script src="js/config.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/data-courses.js"></script>
+  <script src="js/data-classes.js"></script>
+  <script src="js/data-calendar.js"></script>
+  <script src="js/data-grades.js"></script>
+  <script src="js/data-features.js"></script>
+  <script src="js/data-source.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/pages/home.js"></script>
+  <script src="js/pages/timetable.js"></script>
+  <script src="js/pages/course.js"></script>
+  <script src="js/pages/grades.js"></script>
+  <script src="js/pages/calendar.js"></script>
+  <script src="js/pages/more.js"></script>
+  <script src="js/asla.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
