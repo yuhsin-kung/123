@@ -61,7 +61,6 @@
     COMMON_SEED.forEach((id) => { if (ids.length < 8 && ids.indexOf(id) < 0) ids.push(id); });
     return ids.map((id) => items.find((it) => it.id === id)).filter(Boolean);
   }
-  function usingMine() { return Object.keys(DS.useCounts()).length > 0; }
   let mode = 'common';
   let cat = '';
   let query = '';
@@ -88,7 +87,7 @@
   }
   function featGrid() {
     const items = visibleItems();
-    if (!items.length) return `<p class="empty">找不到「${esc(query)}」。可以按 Enter 問阿斯拉。</p>`;
+    if (!items.length) return `<p class="empty">找不到「${esc(query)}」。</p>`;
     return items.map(featButton).join('');
   }
   function sideNav() {
@@ -111,11 +110,9 @@
           <form class="hub-search" id="hub-search">
             ${S.icon('search')}
             <input id="hub-q" type="search" placeholder="搜尋你想辦的事，例如：選課、宿舍、繳費、請假" value="${esc(query)}" aria-label="搜尋功能">
-            <button class="btn btn-primary btn-sm" type="submit">問阿斯拉</button>
           </form>
           <section class="card hub-common" aria-labelledby="h-common">
             <div class="sec-head"><h2 id="h-common">${query ? '搜尋結果' : (cat || '常用功能')}</h2>
-              ${!query && !cat && usingMine() ? '<span class="tiny muted">依你在這台電腦上的使用次數</span>' : ''}
               <button type="button" class="btn btn-sm" id="hub-all">${mode === 'all' && !cat && !query ? '只看常用' : '全部功能'}</button>
             </div>
             <div class="hub-feats" id="hub-feats">${featGrid()}</div>
@@ -143,11 +140,7 @@
         S.$$('.hub-cat').forEach((b) => { b.classList.toggle('on', !query && b.dataset.cat === cat && (cat || mode === 'common')); });
       };
       qEl.addEventListener('input', () => { query = qEl.value.trim(); paint(); });
-      S.$('#hub-search').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const q = qEl.value.trim();
-        if (q && S.openAsla) S.openAsla(q);
-      });
+      S.$('#hub-search').addEventListener('submit', (e) => { e.preventDefault(); query = qEl.value.trim(); paint(); });
       S.$('#hub-all').addEventListener('click', () => {
         query = ''; qEl.value = ''; cat = '';
         mode = mode === 'all' ? 'common' : 'all';
