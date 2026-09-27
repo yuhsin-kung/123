@@ -39,7 +39,7 @@
 
     /* 載入資料到快取。現在是同步讀本機資料，包成 Promise 以便之後換成 fetch。 */
     init() {
-      cache.profile = Object.assign({}, S.PROFILE);
+      cache.profile = Object.assign({}, S.readLogin() || S.PROFILE);
       cache.periods = S.PERIODS.slice();
       cache.courses = S.COURSES.slice();
       cache.courses.forEach((c) => { byCode[c.code] = c; });
@@ -60,6 +60,7 @@
     },
 
     getProfile: () => cache.profile,
+    setProfile(p) { cache.profile = Object.assign({}, p); },
     getPeriods: () => cache.periods,
     getCourses: () => cache.courses,
     getCourse: (code) => byCode[String(code || '').trim().toUpperCase()] || null,

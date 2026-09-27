@@ -69,21 +69,32 @@
     if (from > to) { const t = from; from = to; to = t; }
     const q = f.q.value.trim().toLowerCase(), type = f.type.value, avail = f.avail.checked, free = f.free.checked;
     const planned = S.plannedCourses(); const myDept = DS.getProfile().dept;
-    const list = DS.getCourses().filter((c) => {
-      if (!c.slots.some((s) => s.day === day && s.start <= to && s.end >= from)) return false;
+    const sortC = (a, b) => (b.dept === myDept) - (a.dept === myDept) || a.slots[0].start - b.slots[0].start || a.code.localeCompare(b.code);
+    const textOf = (c) => [c.code, c.name, c.teacher, c.dept].join(' ').toLowerCase();
+    const pass = (c, inSlot) => {
       if (type && c.type !== type) return false;
       if (avail && S.remain(c) <= 0) return false;
-      if (q && [c.code, c.name, c.teacher, c.dept].join(' ').toLowerCase().indexOf(q) < 0) return false;
+      if (q && textOf(c).indexOf(q) < 0) return false;
+      if (!q && !inSlot) return false;
       if (free && !S.inTimetable(c.code) && S.conflictsWith(c, planned).length) return false;
       return true;
-    }).sort((a, b) => (b.dept === myDept) - (a.dept === myDept) || a.slots[0].start - b.slots[0].start || a.code.localeCompare(b.code));
+    };
+    const inSlot = (c) => c.slots.some((s) => s.day === day && s.start <= to && s.end >= from);
+    const all = DS.getCourses().filter((c) => c.slots.length);
+    const list = all.filter((c) => inSlot(c) && pass(c, true)).sort(sortC);
+    const others = q ? all.filter((c) => !inSlot(c) && pass(c, false)).sort(sortC) : [];
     /* 同步網址（方便分享／重新整理），不觸發重新渲染 */
     const qs = new URLSearchParams({ tab: 'find', day, from, to });
     if (q) qs.set('q', f.q.value.trim()); if (type) qs.set('type', type); if (avail) qs.set('avail', 1); if (free) qs.set('free', 1);
     history.replaceState(null, '', '#/course?' + qs.toString());
-    S.$('#find-result').innerHTML = `<p class="result-head">週${S.WD[day]} 第 ${from}${to > from ? '–' + to : ''} 節（${S.periodStart(from)}–${S.periodEnd(to)}）：<b>${list.length}</b> 門課</p>` +
-      (list.length ? `<div class="ccards">${list.map((c) => courseCard(c, planned, myDept)).join('')}</div>`
-        : '<div class="empty">這個時段沒有符合條件的課，換個節次或放寬篩選試試。</div>');
+    const slotHead = `週${S.WD[day]} 第 ${from}${to > from ? '–' + to : ''} 節（${S.periodStart(from)}–${S.periodEnd(to)}）：<b>${list.length}</b> 門課`;
+    const slotBody = list.length
+      ? `<div class="ccards">${list.map((c) => courseCard(c, planned, myDept)).join('')}</div>`
+      : '<div class="empty">這個時段沒有符合條件的課。</div>';
+    const otherBody = others.length
+      ? `<p class="result-head">其他時段也符合「${esc(f.q.value.trim())}」：<b>${others.length}</b> 門</p><div class="ccards">${others.map((c) => courseCard(c, planned, myDept)).join('')}</div>`
+      : '';
+    S.$('#find-result').innerHTML = `<p class="result-head">${slotHead}</p>${slotBody}${otherBody}`;
     cartBar();
   }
   function cartBar() {
@@ -164,11 +175,17 @@
     tab: 'course', title: '選課',
     render(p) {
       const tab = p.get('tab') === 'cart' ? 'cart' : 'find';
+      if (DS.getProfile().role === 'teacher') {
+        return `<div class="page-head"><div><h1>選課</h1><p class="muted small">教師帳號不能加退選</p></div></div>
+          <section class="card"><p>加退選是學生功能。你的開課在「我的課表」。</p>
+          <p><a class="btn btn-primary btn-sm" href="#/timetable">看我的開課</a></p></section>`;
+      }
       return `<div class="page-head"><div><h1>選課</h1><p class="muted small">${S.SEMESTER.label}・學分規則 ${DS.getCreditRule().min}–${DS.getCreditRule().max}（示範）</p></div></div>
         ${periodBanner()}${tabs(tab)}
         ${tab === 'find' ? `${findForm(p)}<div id="find-result"></div><div id="cartbar"></div>` : `<div id="cart-view">${cartView()}</div>`}`;
     },
     after(p) {
+      if (DS.getProfile().role === 'teacher') return;
       if (p.get('tab') === 'cart') return;
       const f = S.$('#find-form');
       f.addEventListener('change', runFind);

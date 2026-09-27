@@ -72,6 +72,18 @@ SCU.featureById = function (id) {
   return null;
 };
 
+/* 2026-09-27 自 news.scu.edu.tw 校園頭條抓下的標題、日期與連結。不是即時同步。 */
+SCU.CAMPUS_NEWS = [
+  { date: '2026-09-24', title: '東吳資科系舉辦凱比機器人創新應用競賽 激盪AI創新應用', url: 'https://news.scu.edu.tw/news/344120' },
+  { date: '2026-09-22', title: '踏足德奧捷探索歷史與社會 東吳中東歐文化夏令營圓滿落幕', url: 'https://news.scu.edu.tw/news/340469' },
+  { date: '2026-09-21', title: '東吳「人工智慧前瞻應用中心」AI 跨域教學新篇章', url: 'https://news.scu.edu.tw/news/338850' },
+  { date: '2026-09-21', title: '東吳企管匯聚國際學者與產業專家 聚焦研討 AI、數位轉型與淨零物流', url: 'https://news.scu.edu.tw/news/338600' },
+  { date: '2026-09-20', title: '東吳大學學者特寫：從聲音考古到擁抱 AI 的羅濟立老師', url: 'https://news.scu.edu.tw/news/333936' },
+  { date: '2026-09-16', title: '東吳「虛實融合學習教室」XR × AI 打造跨域實作場域', url: 'https://news.scu.edu.tw/news/330620' },
+  { date: '2026-09-14', title: '新生第 1 哩溫馨結業 傳承東吳精神', url: 'https://news.scu.edu.tw/news/327771' },
+  { date: '2026-09-07', title: '東吳大學 115 年高教深耕計畫持續獲教育部肯定', url: 'https://news.scu.edu.tw/news/319223' }
+];
+
 /* 示範頁用的假資料（公告、信箱） */
 SCU.NEWS = [
   { date: '2026-09-29', unit: '註冊課務組', title: '加退選將於 10/2（五）截止，請於期限內確認課表', tag: '選課' },

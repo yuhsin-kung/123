@@ -48,6 +48,11 @@
   S.views.grades = {
     tab: 'grades', title: '成績',
     render() {
+      const P = DS.getProfile();
+      if (P.role === 'teacher') {
+        return `<div class="page-head"><div><h1>成績</h1><p class="muted small">教師帳號沒有個人成績單</p></div></div>
+          <section class="card"><p>成績是學生功能。請登出後用學號登入。</p></section>`;
+      }
       const G = S.gradeSummary(); const need = DS.getGradCredits();
       const cur = S.myCourses(); const curCr = S.sumCredits(cur);
       const pctDone = G.cum.earned / need * 100, pctCur = Math.min(100 - pctDone, curCr / need * 100);

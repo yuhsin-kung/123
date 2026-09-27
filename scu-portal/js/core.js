@@ -111,7 +111,13 @@
   /* ---------- 4. 課程工具 ---------- */
   S.remain = (c) => Math.max(0, c.cap - c.enrolled - (state.seatDelta[c.code] || 0));
   S.coursesOf = (codes) => codes.map(DS.getCourse).filter(Boolean);
-  S.myCourses = () => S.coursesOf(state.timetable);
+  S.myCourses = () => {
+    const P = DS.getProfile();
+    if (P && P.role === 'teacher') {
+      return DS.getCourses().filter((c) => (c.teacher || '').indexOf(P.name) >= 0);
+    }
+    return S.coursesOf(state.timetable);
+  };
   S.sumCredits = (list) => list.reduce((a, c) => a + c.credits, 0);
   S.inTimetable = (code) => state.timetable.indexOf(code) >= 0;
   S.inCartAdd = (code) => state.cart.add.indexOf(code) >= 0;

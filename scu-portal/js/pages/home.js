@@ -96,9 +96,75 @@
     return btn('', '常用') + cats.map((c) => `<button type="button" class="hub-cat ${!query && cat === c ? 'on' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
   }
 
+  function publicHome() {
+    const wk = ['日', '一', '二', '三', '四', '五', '六'];
+    const news = (S.CAMPUS_NEWS || []).slice(0, 8);
+    const links = [
+      ['東吳官網', 'https://www.scu.edu.tw/'],
+      ['校園新聞', 'https://news.scu.edu.tw/'],
+      ['招生資訊', 'https://entrance.exam.scu.edu.tw/'],
+      ['圖書館', 'https://www.lib.scu.edu.tw/'],
+      ['校務系統', '#/login']
+    ];
+    return `
+      <section class="scu-hero">
+        <img src="img/scu-logo.png" alt="">
+        <div>
+          <p>SOOCHOW UNIVERSITY</p>
+          <h1>歡迎光臨東吳大學</h1>
+          <p class="scu-motto">養天地正氣，法古今完人</p>
+        </div>
+        <a class="btn" href="#/login">進入校務系統</a>
+      </section>
+      <nav class="pub-links" aria-label="學校網站">${links.map(([name, url]) => url.startsWith('#') ? `<a href="${url}">${esc(name)}</a>` : `<a href="${url}" target="_blank" rel="noopener">${esc(name)}</a>`).join('')}</nav>
+      <div class="scu-split">
+        <section>
+          <div class="sec-head"><h2>最新公告 <small>/ Latest Announcement</small></h2><a class="link-more" href="https://news.scu.edu.tw/" target="_blank" rel="noopener">更多</a></div>
+          ${news.map((n) => {
+            const day = wk[new Date(n.date + 'T00:00:00').getDay()];
+            return `<a class="scu-ann" href="${n.url}" target="_blank" rel="noopener"><span><b>${day}</b>${esc(n.date.replace(/-/g, '/'))}</span><em>校園頭條</em><strong>${esc(n.title)}</strong></a>`;
+          }).join('')}
+        </section>
+        <aside class="scu-side">
+          <h2>參訪資訊</h2>
+          <p><b>外雙溪校區</b><br>111002 臺北市士林區臨溪路 70 號<br>TEL 02-2881-9471</p>
+          <p><b>城中校區</b><br>100006 臺北市中正區貴陽街一段 56 號<br>TEL 02-2311-1531</p>
+          <a class="btn btn-primary" href="#/login">學生／教師登入</a>
+        </aside>
+      </div>
+      <section class="pub-block">
+        <div class="sec-head"><h2>學院</h2><a class="link-more" href="https://admissions.ladm.scu.edu.tw/academy" target="_blank" rel="noopener">各院系 ${S.icon('right')}</a></div>
+        <div class="pub-cards">
+          ${[
+            ['人文社會學院', '外雙溪', '中文、歷史、哲學、政治、社會、社工、音樂', 'https://web-ch.scu.edu.tw/human'],
+            ['外國語文學院', '外雙溪', '英文、日文、德文', 'https://web-ch.scu.edu.tw/foreign'],
+            ['理學院', '外雙溪', '數學、物理、化學、微生物、心理', 'https://web-ch.scu.edu.tw/science'],
+            ['法學院', '城中', '法律', 'https://www.law.scu.edu.tw/'],
+            ['商學院', '城中', '經濟、會計、企管、國貿、財工、資管', 'https://www.ba.scu.edu.tw/'],
+            ['巨量資料管理學院', '外雙溪', '資料科學', 'https://web-ch.scu.edu.tw/bigdata']
+          ].map(([name, campus, depts, url]) => `<a class="pub-card" href="${url}" target="_blank" rel="noopener"><b>${esc(name)}</b><span>${esc(campus)}校區</span><small>${esc(depts)}</small></a>`).join('')}
+        </div>
+      </section>
+      <section class="pub-block">
+        <div class="sec-head"><h2>行政單位</h2></div>
+        <div class="pub-cards pub-cards-sm">
+          ${[
+            ['學務處', 'https://web-ch.scu.edu.tw/student'],
+            ['總務處', 'https://web-ch.scu.edu.tw/general'],
+            ['研究發展處', 'https://web-ch.scu.edu.tw/research'],
+            ['國際處', 'https://www.scu.edu.tw/icae/'],
+            ['圖書館', 'https://www.lib.scu.edu.tw/'],
+            ['招生組', 'https://entrance.exam.scu.edu.tw/'],
+            ['會計室', 'https://web-ch.scu.edu.tw/account'],
+            ['人事室', 'https://web-ch.scu.edu.tw/personnel']
+          ].map(([name, url]) => `<a class="pub-card" href="${url}" target="_blank" rel="noopener"><b>${esc(name)}</b></a>`).join('')}
+        </div>
+      </section>`;
+  }
   S.views.home = {
     tab: 'home', title: '首頁',
     render() {
+      if (!S.readLogin()) return publicHome();
       const P = DS.getProfile(); const wk = S.semesterWeek();
       return `
       <div class="hub">
@@ -130,6 +196,7 @@
       </div>`;
     },
     after() {
+      if (!S.readLogin()) return;
       const qEl = S.$('#hub-q');
       const paint = () => {
         const box = S.$('#hub-feats'); const title = S.$('#h-common'); const allBtn = S.$('#hub-all');
