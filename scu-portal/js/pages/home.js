@@ -1,12 +1,35 @@
 /* =========================================================================
  * pages/home.js — 首頁（#/home）
  * -------------------------------------------------------------------------
- * 版面（示意圖）：左側功能選單、上方打字搜尋、中間常用功能（可改看全部）、
- *   左下阿斯拉、中下今天的課、右側課表與行事曆。
+ * 版面（示意圖）：左側功能選單、上方打字搜尋、搜尋下方阿斯拉導引卡、
+ *   再下面常用功能（可改看全部）、右側上方今天課表、右側下方行事曆。
  * ========================================================================= */
 (function () {
   'use strict';
   const S = window.SCU; const esc = S.esc; const DS = S.DS;
+
+  /* 桌機版「晚安，王小明」跟左側功能選單整塊固定住，滑動整頁時都不會動，
+     只有中間／右側欄（常用功能、今天課表、行事曆…）會捲動。
+     left／width 用 JS 量 .hub 實際邊界，比純 CSS 的 100vw 精準（100vw 在有捲軸時會多算捲軸寬度）。
+     中間／右側欄的 margin-top 讓出「晚安」那排固定佔用的高度，不會被蓋住。 */
+  function placeHubSide() {
+    const side = S.$('.hub-side'); const hub = S.$('.hub'); const hero = S.$('.hub-hello');
+    const main = S.$('.hub-main'); const rail = S.$('.hub-rail');
+    if (!side || !hub || !hero || window.innerWidth < 900) {
+      [side, hero].forEach((el) => { if (el) { el.style.left = ''; el.style.top = ''; el.style.width = ''; } });
+      [main, rail].forEach((el) => { if (el) el.style.marginTop = ''; });
+      return;
+    }
+    const left = hub.getBoundingClientRect().left + 'px';
+    hero.style.left = left;
+    hero.style.width = hub.getBoundingClientRect().width + 'px';
+    side.style.left = left;
+    const gap = hero.offsetHeight + 20;
+    side.style.top = (78 + gap) + 'px';
+    if (main) main.style.marginTop = gap + 'px';
+    if (rail) rail.style.marginTop = gap + 'px';
+  }
+  window.addEventListener('resize', placeHubSide);
 
   function greet(min) { return min < 11 * 60 ? '早安' : min < 14 * 60 ? '午安' : min < 18 * 60 ? '午後好' : '晚安'; }
   function inSemester(d) { return d >= S.SEMESTER.start && d <= S.SEMESTER.end; }
@@ -18,24 +41,57 @@
     return null;
   }
 
-  function todayStrip() {
+  function todayScheduleCard() {
     const d = S.today; const wd = S.weekday(d); const hol = S.holidayOn(d);
-    const list = dayClasses(d); const now = S.nowMin;
+    const list = dayClasses(d);
+    let body;
     if (!list.length) {
       const why = hol ? `今天是「${esc(hol.title)}」，沒有課` : (wd === 0 || wd === 6) ? '今天是週末，沒有課' : !inSemester(d) ? '目前不在上課期間' : '今天沒有排課';
       const nx = nextClassDay(d);
-      return `<a class="today-strip is-empty" href="#/timetable"><b>${why}</b><span>${nx ? `下一堂 ${S.fmtDate(nx.d)} ${nx.first.startT} ${esc(nx.first.c.name)}` : '看課表'}</span></a>`;
+      body = `<p class="empty">${why}${nx ? `，下一堂 ${S.fmtDate(nx.d)} ${nx.first.startT} ${esc(nx.first.c.name)}` : ''}</p>`;
+    } else {
+      body = `<div class="m-classes">${list.map((x) => {
+        const meta = [x.s.room || x.c.room, x.c.teacher].filter(Boolean).join(' · ');
+        return `<article class="m-class"><span class="m-per">${esc(x.startT)}</span><div><b>${esc(x.c.name)}</b><small>${esc(meta)}</small></div></article>`;
+      }).join('')}</div>`;
     }
-    let nextFound = false;
-    const pills = list.map((x) => {
-      let st = 'later';
-      if (x.endMin <= now) st = 'done';
-      else if (x.startMin <= now) st = 'now';
-      else if (!nextFound) { st = 'next'; nextFound = true; }
-      const label = st === 'now' ? '上課中' : st === 'next' ? '下一堂' : st === 'done' ? '已結束' : '今天';
-      return `<a class="today-pill is-${st}" href="#/timetable"><small>${x.startT} ${label}</small><b>${esc(x.c.name)}</b><span>${esc(x.c.room)}</span></a>`;
-    }).join('');
-    return `<section class="today-strip" aria-label="今天的課"><span class="today-kicker">${S.icon('clock')}今天 ${list.length} 堂</span><div class="today-pills">${pills}</div></section>`;
+    return `<section class="card sec-today-tt" aria-labelledby="h-today-tt" style="--n:${list.length}">
+      <div class="sec-head"><h2 id="h-today-tt">${S.icon('table')}今天課表</h2><a class="link-more" href="#/timetable">完整課表 ${S.icon('right')}</a></div>
+      ${body}</section>`;
+  }
+
+  const ASLA_MASCOT = `<svg viewBox="0 0 100 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="50" cy="111" rx="22" ry="4" fill="#f3dcd9"/>
+    <line x1="50" y1="14" x2="50" y2="4" stroke="#e3b9b2" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="50" cy="4" r="4" fill="#8b1a1a"/>
+    <rect x="10" y="30" width="8" height="18" rx="4" fill="#eac8c3"/>
+    <rect x="82" y="30" width="8" height="18" rx="4" fill="#eac8c3"/>
+    <path d="M74 68 Q90 62 88 46" stroke="#f3dcd9" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="88" cy="44" r="6" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <path d="M26 70 Q14 76 14 90" stroke="#f3dcd9" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <rect x="34" y="92" width="10" height="14" rx="5" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <rect x="56" y="92" width="10" height="14" rx="5" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <rect x="26" y="62" width="48" height="34" rx="17" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <circle cx="50" cy="79" r="6" fill="#8b1a1a"/>
+    <rect x="20" y="10" width="60" height="50" rx="25" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <circle cx="38" cy="36" r="4" fill="#2a2320"/>
+    <circle cx="62" cy="36" r="4" fill="#2a2320"/>
+    <circle cx="30" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
+    <circle cx="70" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
+    <path d="M44 42 Q50 47 56 42" stroke="#2a2320" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>`;
+  const ASLA_PROMO_CHIPS = ['我要申請宿舍', '怎麼退選課程？', '畢業需要多少學分？'];
+  function aslaPromoCard() {
+    return `<section class="card asla-promo" aria-labelledby="h-asla-promo">
+      <div class="asla-promo-bot">${ASLA_MASCOT}</div>
+      <div class="asla-promo-body">
+        <div class="asla-promo-title"><h2 id="h-asla-promo">阿斯拉 AI 助手</h2><span class="asla-beta">Beta</span></div>
+        <p class="asla-promo-lead">不知道該去哪裡辦？</p>
+        <p class="asla-promo-desc">告訴我你的問題，我幫你找功能、查資料！</p>
+        <div class="asla-promo-chips">${ASLA_PROMO_CHIPS.map((c) => `<button type="button" data-q="${esc(c)}">「${esc(c)}」</button>`).join('')}</div>
+        <button type="button" class="btn asla-promo-cta" id="asla-promo-open">開始詢問 <span aria-hidden="true">→</span></button>
+      </div>
+    </section>`;
   }
 
   function eventsSection() {
@@ -177,26 +233,23 @@
             ${S.icon('search')}
             <input id="hub-q" type="search" placeholder="搜尋你想辦的事，例如：選課、宿舍、繳費、請假" value="${esc(query)}" aria-label="搜尋功能">
           </form>
+          ${aslaPromoCard()}
           <section class="card hub-common" aria-labelledby="h-common">
             <div class="sec-head"><h2 id="h-common">${query ? '搜尋結果' : (cat || '常用功能')}</h2>
               <button type="button" class="btn btn-sm" id="hub-all">${mode === 'all' && !cat && !query ? '只看常用' : '全部功能'}</button>
             </div>
             <div class="hub-feats" id="hub-feats">${featGrid()}</div>
           </section>
-          ${todayStrip()}
-          <section class="card hub-week" aria-labelledby="h-tt">
-            <div class="sec-head"><h2 id="h-tt">${S.icon('table')}我的課表</h2><a class="link-more" href="#/timetable">完整課表 ${S.icon('right')}</a></div>
-            <div class="only-desk">${S.timetableSheet(S.myCourses())}</div>
-            ${S.mobileWeek(S.myCourses())}
-          </section>
         </div>
         <aside class="hub-rail">
+          ${todayScheduleCard()}
           ${eventsSection()}
         </aside>
       </div>`;
     },
     after() {
       if (!S.readLogin()) return;
+      placeHubSide();
       const qEl = S.$('#hub-q');
       const paint = () => {
         const box = S.$('#hub-feats'); const title = S.$('#h-common'); const allBtn = S.$('#hub-all');
@@ -206,6 +259,11 @@
         if (allBtn) allBtn.textContent = mode === 'all' && !cat && !query ? '只看常用' : '全部功能';
         S.$$('.hub-cat').forEach((b) => { b.classList.toggle('on', !query && b.dataset.cat === cat && (cat || mode === 'common')); });
       };
+      S.$('.asla-promo').addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-q]');
+        if (chip) { S.openAsla(chip.dataset.q); return; }
+        if (e.target.closest('#asla-promo-open')) S.openAsla();
+      });
       qEl.addEventListener('input', () => { query = qEl.value.trim(); paint(); });
       S.$('#hub-search').addEventListener('submit', (e) => { e.preventDefault(); query = qEl.value.trim(); paint(); });
       S.$('#hub-all').addEventListener('click', () => {

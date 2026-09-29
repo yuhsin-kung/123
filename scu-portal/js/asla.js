@@ -241,7 +241,7 @@
   S.aslaAnswer = answer; S.ASLA_INTENTS = INTENTS;
 
   /* ---------------- UI ---------------- */
-  const panel = $('#asla-panel'), fab = $('#asla-fab'), log = $('#asla-log'), input = $('#asla-input');
+  const panel = $('#asla-panel'), head = $('.asla-head'), dot = $('#asla-dot'), log = $('#asla-log'), input = $('#asla-input');
   const CHIPS = ['今天有什麼課', '加退選什麼時候截止', '期中退選在哪', '星期三下午有什麼課', '我的 GPA', '學生證掉了', '我要辦就貸', '心情不好想找人聊'];
   $('#asla-chips').innerHTML = CHIPS.map((c) => `<button type="button" data-q="${esc(c)}">${esc(c)}</button>`).join('');
 
@@ -323,111 +323,143 @@
       aslaHist.push({ role: 'assistant', content: text.slice(0, 1500), route: data.route || (local.miss ? 'general' : 'portal') });
     }).catch(() => paint(el, local.text, local.src + '（語言模型未連線，改顯示站內原文）'));
   }
+  /* 面板可拖曳（只在桌機版浮動視窗時；手機版是滿版下拉，拖了也沒地方可去）。
+     位置記在這台瀏覽器（比例，不是像素），換視窗大小也還在畫面裡。 */
+  const PANEL_KEY = 'asla-panel-pos';
+  function readPanelFrac() {
+    try { return JSON.parse(localStorage.getItem(PANEL_KEY) || 'null'); } catch (e) { return null; }
+  }
+  function writePanelFrac(nx, ny) {
+    try { localStorage.setItem(PANEL_KEY, JSON.stringify({ nx, ny })); } catch (e) { /* 記不住就只留在這次畫面 */ }
+  }
+  function clearPanelPos() { ['left', 'top', 'right', 'bottom'].forEach((k) => { panel.style[k] = ''; }); }
+  function setPanelPos(left, top) {
+    const margin = 8;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxX = Math.max(margin, window.innerWidth - w - margin);
+    const maxY = Math.max(margin, window.innerHeight - h - margin);
+    left = Math.min(Math.max(margin, left), maxX);
+    top = Math.min(Math.max(margin, top), maxY);
+    panel.style.left = left + 'px'; panel.style.top = top + 'px';
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    return { left, top };
+  }
+  function applyStoredPanelPos() {
+    if (window.innerWidth < 900) { clearPanelPos(); return; }
+    const frac = readPanelFrac();
+    if (!frac || !Number.isFinite(frac.nx) || !Number.isFinite(frac.ny)) { clearPanelPos(); return; }
+    const w = panel.offsetWidth || 390, h = panel.offsetHeight || 620;
+    setPanelPos(frac.nx * Math.max(1, window.innerWidth - w), frac.ny * Math.max(1, window.innerHeight - h));
+  }
+  let panelDrag = null;
+  head.addEventListener('pointerdown', (e) => {
+    if (window.innerWidth < 900 || (e.button != null && e.button !== 0) || e.target.closest('#asla-close')) return;
+    const rect = panel.getBoundingClientRect();
+    panelDrag = { id: e.pointerId, dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+    head.setPointerCapture(e.pointerId);
+    head.classList.add('is-dragging');
+  });
+  head.addEventListener('pointermove', (e) => {
+    if (!panelDrag || e.pointerId !== panelDrag.id) return;
+    setPanelPos(e.clientX - panelDrag.dx, e.clientY - panelDrag.dy);
+  });
+  head.addEventListener('pointerup', (e) => {
+    if (!panelDrag || e.pointerId !== panelDrag.id) return;
+    panelDrag = null;
+    head.classList.remove('is-dragging');
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    writePanelFrac(parseFloat(panel.style.left) / Math.max(1, window.innerWidth - w), parseFloat(panel.style.top) / Math.max(1, window.innerHeight - h));
+  });
+  let lastPanelW = window.innerWidth;
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth;
+    if (Math.abs(w - lastPanelW) <= 48) return;
+    lastPanelW = w;
+    if (!panel.hidden) applyStoredPanelPos();
+  });
+
+  /* 從對話裡點「前往」跳頁後，面板縮成這顆圓點（可拖），不會一直擋著跳過去的頁面。
+     點圓點展開回原本的對話（log 內容還在）。位置一樣記在這台瀏覽器。 */
+  const DOT_KEY = 'asla-dot-pos';
+  function readDotFrac() {
+    try { return JSON.parse(localStorage.getItem(DOT_KEY) || 'null'); } catch (e) { return null; }
+  }
+  function writeDotFrac(nx, ny) {
+    try { localStorage.setItem(DOT_KEY, JSON.stringify({ nx, ny })); } catch (e) { /* 記不住就只留在這次畫面 */ }
+  }
+  function clearDotPos() { ['left', 'top', 'right', 'bottom'].forEach((k) => { dot.style[k] = ''; }); }
+  function placeDot(x, y) {
+    const margin = 8;
+    const size = dot.offsetWidth || 40;
+    const maxX = Math.max(margin, window.innerWidth - size - margin);
+    const maxY = Math.max(margin, window.innerHeight - size - margin);
+    x = Math.min(Math.max(margin, x), maxX);
+    y = Math.min(Math.max(margin, y), maxY);
+    dot.style.left = x + 'px'; dot.style.top = y + 'px';
+    dot.style.right = 'auto'; dot.style.bottom = 'auto';
+    return { x, y };
+  }
+  function applyStoredDotPos() {
+    const frac = readDotFrac();
+    if (!frac || !Number.isFinite(frac.nx) || !Number.isFinite(frac.ny)) { clearDotPos(); return; }
+    const size = dot.offsetWidth || 40;
+    placeDot(frac.nx * Math.max(1, window.innerWidth - size), frac.ny * Math.max(1, window.innerHeight - size));
+  }
+  let dotDrag = null;
+  dot.addEventListener('pointerdown', (e) => {
+    if (e.button != null && e.button !== 0) return;
+    const rect = dot.getBoundingClientRect();
+    dotDrag = { id: e.pointerId, dx: e.clientX - rect.left, dy: e.clientY - rect.top, sx: e.clientX, sy: e.clientY, moved: false };
+    dot.setPointerCapture(e.pointerId);
+  });
+  dot.addEventListener('pointermove', (e) => {
+    if (!dotDrag || e.pointerId !== dotDrag.id) return;
+    if (Math.abs(e.clientX - dotDrag.sx) + Math.abs(e.clientY - dotDrag.sy) > 6) dotDrag.moved = true;
+    if (dotDrag.moved) placeDot(e.clientX - dotDrag.dx, e.clientY - dotDrag.dy);
+  });
+  dot.addEventListener('pointerup', (e) => {
+    if (!dotDrag || e.pointerId !== dotDrag.id) return;
+    const moved = dotDrag.moved;
+    dotDrag = null;
+    if (!moved) return;
+    dot.dataset.dragged = '1';
+    const pos = placeDot(parseFloat(dot.style.left), parseFloat(dot.style.top));
+    const size = dot.offsetWidth || 40;
+    writeDotFrac(pos.x / Math.max(1, window.innerWidth - size), pos.y / Math.max(1, window.innerHeight - size));
+  });
+  dot.addEventListener('click', (e) => {
+    if (dot.dataset.dragged === '1') { dot.dataset.dragged = ''; e.preventDefault(); e.stopPropagation(); return; }
+    open();
+  });
+  let lastDotW = window.innerWidth;
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth;
+    if (Math.abs(w - lastDotW) <= 48) return;
+    lastDotW = w;
+    if (!dot.hidden) applyStoredDotPos();
+  });
+
   function open(q) {
-    placePanel();
-    panel.hidden = false; fab.setAttribute('aria-expanded', 'true'); document.body.classList.add('asla-open');
+    dot.hidden = true;
+    panel.hidden = false;
+    applyStoredPanelPos();
     if (!log.childElementCount) botReply({ text: '嗨，我是阿斯拉。想知道什麼？直接用問的，我帶你到站內對應的頁面。', src: SRC });
     if (q) ask(q); else setTimeout(() => input.focus(), 30);
   }
-  function close() { panel.hidden = true; fab.setAttribute('aria-expanded', 'false'); document.body.classList.remove('asla-open'); }
+  function minimize() { panel.hidden = true; dot.hidden = false; applyStoredDotPos(); }
   S.openAsla = open; S.askAsla = ask;
 
-  const FAB_KEY = 'asla-fab-pos';
-  let fabAnchor = null;
-  let fabFrac = null;
-  function readFrac() {
-    try { return JSON.parse(localStorage.getItem(FAB_KEY) || 'null'); } catch (e) { return null; }
-  }
-  function writeFrac(nx, ny) {
-    fabFrac = { nx, ny };
-    try { localStorage.setItem(FAB_KEY, JSON.stringify(fabFrac)); } catch (e) { /* 記不住就只留在這次畫面 */ }
-  }
-  function placePanel() {
-    const r = fab.getBoundingClientRect();
-    if (r.width) fabAnchor = { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
-    if (window.innerWidth < 900) {
-      ['left', 'top', 'right', 'bottom', 'width', 'height'].forEach((k) => { panel.style[k] = ''; });
-      return;
-    }
-    const a = fabAnchor || r;
-    const margin = 12;
-    const w = Math.min(390, window.innerWidth - margin * 2);
-    const h = Math.min(620, window.innerHeight - margin * 2);
-    let left = a.left + a.width / 2 > window.innerWidth / 2 ? a.left - w - margin : a.right + margin;
-    if (left < margin) left = margin;
-    if (left + w > window.innerWidth - margin) left = window.innerWidth - w - margin;
-    let top = a.top + a.height / 2 > window.innerHeight / 2 ? a.bottom - h : a.top;
-    if (top < margin) top = margin;
-    if (top + h > window.innerHeight - margin) top = Math.max(margin, window.innerHeight - h - margin);
-    panel.style.left = left + 'px';
-    panel.style.top = top + 'px';
-    panel.style.right = 'auto';
-    panel.style.bottom = 'auto';
-    panel.style.width = w + 'px';
-    panel.style.height = h + 'px';
-  }
-  function placeFab(x, y) {
-    if (getComputedStyle(fab).display === 'none') return { x, y };
-    const size = fab.offsetWidth || 40;
-    const maxX = Math.max(8, window.innerWidth - size - 8);
-    const maxY = Math.max(8, window.innerHeight - size - 8);
-    x = Math.min(Math.max(8, x), maxX);
-    y = Math.min(Math.max(8, y), maxY);
-    fab.style.left = x + 'px';
-    fab.style.top = y + 'px';
-    fab.style.right = 'auto';
-    fab.style.bottom = 'auto';
-    placePanel();
-    return { x, y };
-  }
-  function applyFrac() {
-    if (!fabFrac || !Number.isFinite(fabFrac.nx) || !Number.isFinite(fabFrac.ny)) return;
-    const size = fab.offsetWidth || 40;
-    placeFab(fabFrac.nx * Math.max(1, window.innerWidth - size), fabFrac.ny * Math.max(1, window.innerHeight - size));
-  }
-  fabFrac = readFrac();
-  if (fabFrac && Number.isFinite(fabFrac.x) && !Number.isFinite(fabFrac.nx)) fabFrac = null;
-  if (fabFrac) applyFrac();
-  let lastW = window.innerWidth;
-  window.addEventListener('resize', () => {
-    const w = window.innerWidth;
-    const widthChanged = Math.abs(w - lastW) > 48;
-    lastW = w;
-    if (!widthChanged) return;
-    if (fabFrac) applyFrac();
-    else if (!panel.hidden) placePanel();
-  });
-  let drag = null;
-  fab.addEventListener('pointerdown', (e) => {
-    if (e.button != null && e.button !== 0) return;
-    const rect = fab.getBoundingClientRect();
-    drag = { id: e.pointerId, dx: e.clientX - rect.left, dy: e.clientY - rect.top, sx: e.clientX, sy: e.clientY, moved: false };
-    fab.setPointerCapture(e.pointerId);
-  });
-  fab.addEventListener('pointermove', (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    if (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy) > 6) drag.moved = true;
-    if (drag.moved) placeFab(e.clientX - drag.dx, e.clientY - drag.dy);
-  });
-  fab.addEventListener('pointerup', (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const moved = drag.moved;
-    drag = null;
-    if (!moved) return;
-    fab.dataset.dragged = '1';
-    const pos = placeFab(parseFloat(fab.style.left), parseFloat(fab.style.top));
-    const size = fab.offsetWidth || 40;
-    writeFrac(pos.x / Math.max(1, window.innerWidth - size), pos.y / Math.max(1, window.innerHeight - size));
-  });
-  fab.addEventListener('click', (e) => {
-    if (fab.dataset.dragged === '1') { fab.dataset.dragged = ''; e.preventDefault(); e.stopPropagation(); return; }
-    panel.hidden ? open() : close();
-  });
-  $('#asla-close').addEventListener('click', close);
+  $('#asla-close').addEventListener('click', minimize);
   $('#asla-form').addEventListener('submit', (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); });
   $('#asla-chips').addEventListener('click', (e) => { const b = e.target.closest('button[data-q]'); if (b) ask(b.dataset.q); });
   log.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-hash],button[data-aact]'); if (!b) return;
-    if (b.dataset.hash) { S.go(b.dataset.hash); if (window.innerWidth < 720) close(); }
+    if (!b.dataset.hash) return;
+    /* 換頁是靠 hashchange 非同步重繪；縮成圓點等新頁面畫完再做，
+       不然面板先收起、新頁面隔一拍才出現，看起來像卡頓。網址沒變（同一頁）才沒有 hashchange，直接縮。 */
+    const changing = location.hash !== b.dataset.hash;
+    if (changing) window.addEventListener('hashchange', minimize, { once: true });
+    S.go(b.dataset.hash);
+    if (!changing) minimize();
   });
 })();
