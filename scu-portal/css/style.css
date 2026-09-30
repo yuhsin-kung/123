@@ -236,6 +236,21 @@ select,input[type=search],input[type=text],input[type=date],input[type=time]{fon
 .ev-on{font-size:.7rem;font-weight:700;color:var(--green)}
 .ev-row .chev{color:#c4bab3}
 .ev-row.is-urgent .ev-count{box-shadow:inset 0 0 0 2px currentColor}
+/* 首頁行事曆：時間軸 */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:grid;grid-template-columns:40px 12px minmax(0,1fr);column-gap:12px;color:var(--ink)}
+.tl-date{padding-top:9px;text-align:right;font-size:.85rem;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tl-rail{position:relative;display:flex;justify-content:center}
+.tl-rail::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:var(--line)}
+.tl-item:first-child .tl-rail::before{top:17px}
+.tl-item:last-child .tl-rail::before{bottom:auto;height:17px}
+.tl-item .tl-dot{position:relative;margin-top:13px;width:10px;height:10px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px var(--card)}
+.tl-item.is-ongoing .tl-dot{box-shadow:0 0 0 3px var(--card),0 0 0 5px currentColor}
+.tl-body{min-width:0;padding:8px 0 14px}
+.tl-body b{display:block;font-size:.98rem;line-height:1.35}
+.tl-body small{display:block;margin-top:2px;font-size:.8rem;color:var(--muted)}
+.tl-item.is-urgent .tl-when{color:var(--red);font-weight:700}
+.tl-item:hover .tl-body b{color:var(--red)}
 .ev-tag{display:inline-block;font-size:.68rem;font-weight:700;border-radius:6px;padding:0 6px}
 .ev-course{background:var(--red-50);color:var(--red)}
 .ev-fee{background:var(--amber-50);color:var(--amber)}
@@ -539,7 +554,7 @@ body:has(.cartbar) .asla-dot,body:has(.submit-bar) .asla-dot{bottom:calc(var(--t
   .hub-main{grid-column:2;grid-row:1}
   .hub-rail{grid-column:3;grid-row:1}
   .hub-side{flex-direction:column;position:fixed;z-index:5;left:calc(max(0px,(100vw - 1440px) / 2) + 16px);width:188px;max-height:calc(100vh - 94px);overflow-y:auto}
-  .hub-cat{justify-content:flex-start;text-align:left;border-radius:12px;white-space:normal;line-height:1.2;font-size:1rem;padding:0 12px}
+  .hub-cat{justify-content:flex-start;text-align:left;border-radius:12px;white-space:normal;line-height:1.2;font-size:1rem;padding:0 12px;height:46px}
   .hub-feats{grid-template-columns:repeat(4,minmax(0,1fr))}
   .hub .card{padding:16px 16px}
   .hub-tt .tt{grid-template-columns:36px repeat(5,minmax(0,1fr));min-width:0}
@@ -551,6 +566,8 @@ body:has(.cartbar) .asla-dot,body:has(.submit-bar) .asla-dot{bottom:calc(var(--t
   .hub-rail .ev-body h3,.sec-events .ev-body h3{font-size:1rem}
   .hub-rail .ev-body p,.sec-events .ev-body p{font-size:.92rem}
   .hub-rail .ev-count b{font-size:1.35rem}
+  .hub-rail .tl-body b{font-size:1rem}
+  .hub-rail .tl-body small{font-size:.88rem}
   .card{padding:18px 20px}
   .ftiles{grid-template-columns:repeat(3,minmax(0,1fr))}
   .sem-grid{grid-template-columns:repeat(2,1fr);align-items:start}

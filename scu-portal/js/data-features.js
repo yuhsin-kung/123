@@ -1,5 +1,5 @@
 /* =========================================================================
- * data-features.js — 「更多／所有功能」清單（取代舊版 13 大類外部連結地圖）
+ * data-features.js — 「更多／所有功能」清單（10 大類，取代舊版 13 大類外部連結地圖）
  * -------------------------------------------------------------------------
  * 每個功能都是站內頁面，不連到任何外部網站：
  *   route 以 #/p/ 開頭 → 示範頁（js/pages/more.js 的 placeholder），顯示說明與示範資料
@@ -9,59 +9,62 @@
 var SCU = window.SCU = window.SCU || {};
 
 SCU.FEATURES = [
-  { cat: '課業與選課', items: [
-    { id: 'course', icon: 'course', name: '選課', route: '#/course', built: true, desc: '時段找課、選課車、送出前檢查（衝堂／學分／額滿）。', kw: ['選課', '加選', '退選', '加退選', '初選', '找課', '搶課'] },
-    { id: 'timetable', icon: 'table', name: '我的課表', route: '#/timetable', built: true, desc: '一週課表、剩餘名額與總學分。', kw: ['課表', '功課表', '上課時間', '教室'] },
+  { cat: '選課與課程', items: [
+    { id: 'course', icon: 'course', name: '選課', route: '#/course', built: true, desc: '時段找課、選課車、送出前檢查（衝堂／學分／額滿）；選課清單查詢、確認與列印在同一頁。', kw: ['選課', '加選', '退選', '加退選', '初選', '找課', '搶課', '選課清單', '選課查對表', '網路選課'] },
+    { id: 'timetable', icon: 'table', name: '課表查詢', route: '#/timetable', built: true, desc: '我的功課表、全校課表、班級課表；顯示剩餘名額與本學期學分。', kw: ['課表', '功課表', '全校課表', '課務資料', '授課計劃', '上課時間', '教室'] },
+    { id: 'advising', icon: 'book', name: '選課輔導', route: '#/p/advising', desc: '選課輔導紀錄、預選表列印、輔導問卷與英文適用級別。', subs: ['選課輔導紀錄查詢', '預選表列印', '選課輔導問卷調查', '英文適用級別查詢'], kw: ['選課輔導', '預選表', '輔導問卷', '英文級別', '英文適用級別'] },
+    { id: 'double', icon: 'target', name: '雙主修／輔系／學程', route: '#/p/double', desc: '加修學程：申請條件、線上申請、歷年紀錄與放棄。', subs: ['查詢申請條件', '線上申請', '歷年紀錄', '放棄申請'], kw: ['雙主修', '輔系', '跨領域', '學程', '雙輔跨', '加修學程'] },
+    { id: 'second', icon: 'plus', name: '第二專長', route: '#/p/second', desc: '加修學程：第二專長申請、選課、放棄與狀態查詢。', subs: ['第二專長申請', '第二專長選課', '放棄第二專長', '狀態查詢'], kw: ['第二專長', '專長', '加修學程'] },
     { id: 'midterm-drop', icon: 'undo', name: '期中退選', route: '#/p/midterm-drop', desc: '開放期間選擇要退選的課程（成績單註記 W，示範規則）。', subs: ['選擇退選課程', '退選紀錄查詢'], kw: ['期中退選', '期中退', '停修', '棄選'] },
-    { id: 'final-drop', icon: 'out', name: '期末退修', route: '#/p/final-drop', desc: '學期末依授課教師規定申請退修。', subs: ['期末退修申請', '申請進度查詢'], kw: ['期末退修', '退修'] },
-    { id: 'double', icon: 'target', name: '雙主修／輔系／學程', route: '#/p/double', desc: '申請、查詢條件與放棄。', subs: ['查詢申請條件', '線上申請', '歷年紀錄', '放棄申請'], kw: ['雙主修', '輔系', '跨領域', '學程', '雙輔跨'] },
-    { id: 'second', icon: 'plus', name: '第二專長', route: '#/p/second', desc: '第二專長申請、選課、放棄與狀態查詢。', subs: ['第二專長申請', '第二專長選課', '放棄第二專長', '狀態查詢'], kw: ['第二專長', '專長'] },
-    { id: 'summer', icon: 'sun', name: '暑修', route: '#/p/summer', desc: '暑期班報名與繳費。', subs: ['暑期班課程查詢', '報名', '繳費單'], kw: ['暑修', '暑期班'] },
-    { id: 'feedback', icon: 'chat', name: '課程意見調查', route: '#/p/feedback', desc: '期中／期末課堂反應意見填寫。', subs: ['填寫課堂反應意見'], kw: ['課堂反應', '教學評量', '期末問卷', '意見調查'] }
+    { id: 'final-drop', icon: 'out', name: '期末退修', route: '#/p/final-drop', desc: '學期末依授課教師規定申請退修，操作說明直接附在頁內。', subs: ['期末退修申請', '操作說明', '申請進度查詢'], kw: ['期末退修', '退修'] },
+    { id: 'summer', icon: 'sun', name: '暑修', route: '#/p/summer', desc: '暑期班選課報名、列印與相關資料查詢。', subs: ['暑期班課程查詢', '選課報名', '報名表列印', '繳費單'], kw: ['暑修', '暑期班'] }
   ]},
-  { cat: '成績與畢業', items: [
-    { id: 'grades', icon: 'chart', name: '成績', route: '#/grades', built: true, desc: '所有學期成績、GPA、班排系排一次看。', kw: ['成績', '分數', '班排', '系排', '排名', '趴數', '操行', 'gpa', '平均'] },
+  { cat: '學業與學籍', items: [
+    { id: 'grades', icon: 'chart', name: '學期成績', route: '#/grades', built: true, desc: '所有學期成績、班排系排、趴數、操行一次看。', kw: ['成績', '分數', '班排', '系排', '排名', '趴數', '操行', 'gpa', '平均'] },
     { id: 'graduation', icon: 'cap', name: '畢業學分進度', route: '#/grades?focus=grad', built: true, desc: '已修學分與畢業門檻（在成績頁）。', kw: ['畢業', '學分進度', '還差', '畢業門檻', '畢業標準'] },
     { id: 'academic-care', icon: 'hands', name: '學業關懷', route: '#/p/academic-care', desc: '學業預警與關懷紀錄。', subs: ['預警科目查詢', '導師關懷紀錄'], kw: ['學業關懷', '預警', '二一', '被當'] },
-    { id: 'cert', icon: 'file', name: '在學證明／成績單', route: '#/p/cert', desc: '申請在學證明、成績單。', subs: ['在學證明申請', '中英文成績單申請', '成績單郵寄登記'], kw: ['在學證明', '成績單', '證明'] }
+    { id: 'cert', icon: 'file', name: '在學證明／成績單', route: '#/p/cert', desc: '在學證明查詢、成績單申請與期末成績單郵寄登記。', subs: ['在學證明查詢', '中英文成績單申請', '期末成績單郵寄登記'], kw: ['在學證明', '成績單', '證明', '郵寄'] }
   ]},
-  { cat: '行事曆與通知', items: [
-    { id: 'calendar', icon: 'calendar', name: '行事曆', route: '#/calendar', built: true, desc: '全校重要日期：選課、繳費、考試、放假。', kw: ['行事曆', '截止', '期限', '日期', '放假', '考試週', '期中考', '期末考'] },
-    { id: 'news', icon: 'horn', name: '公告', route: '#/p/news', desc: '學校與系所公告（示範內容）。', kw: ['公告', '消息', '最新消息', '通知'] },
-    { id: 'mail', icon: 'mail', name: '校園信箱', route: '#/p/mail', desc: '學校信箱收件匣（示範內容）。', kw: ['信箱', 'email', 'e-mail', 'mail', '郵件', 'webmail'] }
-  ]},
-  { cat: '繳費與財務', items: [
-    { id: 'fee', icon: 'pay', name: '學雜費繳費', route: '#/p/fee', desc: '本學期繳費單、繳費狀態與截止日。', subs: ['繳費單', '繳費狀態', '退補費查詢'], kw: ['學費', '繳費', '學雜費', '繳費單', '退費', '補費', '欠費'] },
-    { id: 'loan', icon: 'bank', name: '就學貸款', route: '#/p/loan', desc: '線上申請、上傳撥款通知書、差額繳費單。', subs: ['線上就貸申請', '上傳撥款通知書', '差額繳費單', '貸款進度'], kw: ['就貸', '就學貸款', '助學貸款', '貸款', '撥款通知書', '對保'] },
-    { id: 'cards', icon: 'park', name: '停車卡／影印卡', route: '#/p/cards', desc: '儲值紀錄與餘額。', subs: ['停車卡儲值紀錄', '影印卡餘額'], kw: ['停車卡', '影印卡', '停車', '影印', '儲值'] }
-  ]},
-  { cat: '獎助學金', items: [
-    { id: 'scholarship', icon: 'medal', name: '獎助學金', route: '#/p/scholarship', desc: '可申請項目、申請與得獎紀錄。', subs: ['可申請獎學金', '申請紀錄', '得獎紀錄'], kw: ['獎學金', '助學金', '獎助學金', '清寒', '補助'] },
+  { cat: '繳費與財務補助', items: [
+    { id: 'fee', icon: 'pay', name: '帳單中心', route: '#/p/fee', desc: '註冊繳費、學雜費、欠費、退補費、學生會會費等繳費單統一列表與列印。', subs: ['學雜費繳費單', '繳費狀態', '欠費金額', '退補費查詢', '學生會會費繳費單', '就貸差額繳費單'], kw: ['學費', '繳費', '學雜費', '繳費單', '註冊', '退費', '補費', '欠費', '學生會費', '帳單'] },
+    { id: 'loan', icon: 'bank', name: '就學貸款', route: '#/p/loan', desc: '線上申請、上傳撥款通知書、差額繳費單與貸款進度。', subs: ['線上就貸申請', '上傳撥款通知書', '差額繳費單', '貸款進度查詢'], kw: ['就貸', '就學貸款', '助學貸款', '貸款', '撥款通知書', '對保'] },
+    { id: 'scholarship', icon: 'medal', name: '獎助學金', route: '#/p/scholarship', desc: '可申請、已申請、得獎紀錄在同一個列表，以狀態區分。', subs: ['可申請獎學金', '申請紀錄', '得獎紀錄', '未領證明'], kw: ['獎學金', '助學金', '獎助學金', '清寒', '補助', '未領證明'] },
     { id: 'emergency', icon: 'life', name: '急難救助', route: '#/p/emergency', desc: '家庭突發變故時的急難救助申請。', subs: ['急難救助申請'], kw: ['急難', '救助', '經濟困難', '家裡出事'] }
   ]},
-  { cat: '住宿與生活', items: [
-    { id: 'dorm', icon: 'home', name: '宿舍', route: '#/p/dorm', desc: '宿舍申請、床位選填與申請狀態。', subs: ['宿舍申請', '床位選填', '申請狀態'], kw: ['宿舍', '住宿', '床位', '住校'] },
-    { id: 'leave', icon: 'thermo', name: '請假', route: '#/p/leave', desc: '線上請假與請假紀錄。', subs: ['線上請假', '請假紀錄'], kw: ['請假', '病假', '事假', '公假'] },
+  { cat: '住宿', items: [
+    { id: 'dorm', icon: 'home', name: '宿舍', route: '#/p/dorm', desc: '宿舍申請與進度同頁顯示、特殊個案申請、床位選填。', subs: ['宿舍申請', '申請狀態', '特殊個案申請', '床位選填'], kw: ['宿舍', '住宿', '床位', '住校', '特殊個案'] }
+  ]},
+  { cat: '空間與設備預約', items: [
+    { id: 'venue', icon: 'building', name: '教室與場地借用', route: '#/p/venue', desc: '自習教室、空教室、電腦教室、社團教室與教室資訊查詢。', subs: ['自習教室', '空教室查詢', '電腦教室', '社團教室', '教室資訊查詢'], kw: ['借教室', '場地', '租借', '空教室', '自習教室', '電腦教室', '社團教室', '教室資訊'] },
+    { id: 'equipment', icon: 'bag', name: '置物櫃／社團器材', route: '#/p/equipment', desc: '置物櫃申請與社團器材借用。', subs: ['置物櫃申請', '社團器材借用'], kw: ['置物櫃', '器材', '社團器材', '借器材'] },
     { id: 'reading-room', icon: 'book', name: '閱覽室劃位', route: '#/p/reading-room', desc: '閱覽室座位預約。', subs: ['座位預約', '我的預約'], kw: ['閱覽室', '劃位', '座位', '自習'] },
-    { id: 'card', icon: 'id', name: '學生證／悠遊卡', route: '#/p/card', desc: '遺失時線上鎖卡、補辦說明。', subs: ['線上鎖卡', '補辦申請'], kw: ['悠遊卡', '學生證', '鎖卡', '掛失', '卡片不見', '卡不見'] }
+    { id: 'poster', icon: 'pin', name: '海報欄申請', route: '#/p/poster', desc: '校園海報欄位申請與張貼期間查詢。', subs: ['海報欄位申請', '我的申請'], kw: ['海報', '海報欄', '張貼', '宣傳'] }
   ]},
-  { cat: '校園服務與活動', items: [
-    { id: 'venue', icon: 'building', name: '場地借用', route: '#/p/venue', desc: '自習教室、空教室、置物櫃、社團器材。', subs: ['空教室查詢', '場地租借', '置物櫃'], kw: ['借教室', '場地', '租借', '空教室', '自習教室', '置物櫃', '器材'] },
-    { id: 'lost', icon: 'search', name: '失物招領與反映', route: '#/p/lost', desc: '失物招領、校園問題反映、海報欄申請。', subs: ['失物招領', '問題反映', '海報欄申請'], kw: ['失物', '掉了', '遺失物', '海報', '反映'] },
+  { cat: '社團與活動', items: [
     { id: 'events', icon: 'mic', name: '活動報名', route: '#/p/events', desc: '講座與校園活動報名。', subs: ['活動列表', '我的報名'], kw: ['活動報名', '講座', '活動'] },
-    { id: 'club', icon: 'masks', name: '社團', route: '#/p/club', desc: '社團登錄、改選、經費申請、經歷認證。', subs: ['期初登錄', '期末改選', '經費申請', '經歷認證'], kw: ['社團', '社長', '社團經費', '經歷認證'] }
+    { id: 'club', icon: 'masks', name: '社團', route: '#/p/club', desc: '期初登錄、期末改選、經費申請與查詢（同頁）、經歷認證。', subs: ['期初登錄', '期末改選', '經費申請／查詢', '個人經歷認證', '團體經歷認證'], kw: ['社團', '社長', '社團經費', '經歷認證', '改選'] }
   ]},
-  { cat: '工讀與職涯', items: [
-    { id: 'work', icon: 'bag', name: '工讀時數／薪資', route: '#/p/work', desc: '工讀出勤時數登錄與薪資查詢。', subs: ['出勤時數登錄', '薪資查詢'], kw: ['工讀', '打工', '薪水', '時數', '出勤'] },
+  { cat: '工讀、實習與職涯', items: [
+    { id: 'work', icon: 'bag', name: '工讀時數／薪資', route: '#/p/work', desc: '出勤時數與薪資在同一頁，時數直接對應薪資。', subs: ['出勤時數登錄', '薪資查詢'], kw: ['工讀', '打工', '薪水', '時數', '出勤'] },
     { id: 'ta', icon: 'board', name: '教學助理', route: '#/p/ta', desc: 'TA 申請與線上確認。', subs: ['TA 申請', '線上確認'], kw: ['教學助理', '助教', 'ta'] },
     { id: 'intern', icon: 'compass', name: '實習與證照', route: '#/p/intern', desc: '實習作業與證照獎勵申請。', subs: ['實習登錄', '證照獎勵申請'], kw: ['實習', '證照', '職涯', '求職'] }
   ]},
-  { cat: '健康與保險', items: [
+  { cat: '校園生活', items: [
+    { id: 'calendar', icon: 'calendar', name: '行事曆', route: '#/calendar', built: true, desc: '全校重要日期：選課、繳費、考試、放假。', kw: ['行事曆', '截止', '期限', '日期', '放假', '考試週', '期中考', '期末考'] },
+    { id: 'news', icon: 'horn', name: '公告', route: '#/p/news', desc: '學校與系所公告（示範內容）。', kw: ['公告', '消息', '最新消息', '通知'] },
+    { id: 'leave', icon: 'thermo', name: '請假', route: '#/p/leave', desc: '線上請假與請假紀錄。', subs: ['線上請假', '請假紀錄'], kw: ['請假', '病假', '事假', '公假'] },
     { id: 'counsel', icon: 'heart', name: '諮商預約', route: '#/p/counsel', desc: '心理諮商初談預約與身心健康資源。', subs: ['初談預約', '我的預約'], kw: ['諮商', '心理', '心情', '壓力', '焦慮', '難過', '憂鬱', '睡不著'] },
-    { id: 'insurance', icon: 'shield', name: '學生保險', route: '#/p/insurance', desc: '學生團體保險理賠申請。', subs: ['理賠申請', '理賠進度'], kw: ['保險', '理賠', '學保', '受傷', '住院'] }
+    { id: 'insurance', icon: 'shield', name: '學生保險', route: '#/p/insurance', desc: '學生團體保險理賠申請。', subs: ['理賠申請', '理賠進度'], kw: ['保險', '理賠', '學保', '受傷', '住院'] },
+    { id: 'cards', icon: 'park', name: '停車卡／影印卡', route: '#/p/cards', desc: '卡務：儲值紀錄與餘額。', subs: ['停車卡儲值紀錄', '影印卡查詢'], kw: ['停車卡', '影印卡', '停車', '影印', '儲值', '卡務'] },
+    { id: 'card', icon: 'id', name: '學生證／悠遊卡', route: '#/p/card', desc: '卡務：遺失時線上鎖卡、補辦說明。', subs: ['悠遊卡線上鎖卡', '補辦申請'], kw: ['悠遊卡', '學生證', '鎖卡', '掛失', '卡片不見', '卡不見', '卡務'] }
   ]},
-  { cat: '個人與設定', items: [
-    { id: 'profile', icon: 'user', name: '個人資料', route: '#/p/profile', desc: '基本資料與照片顯示設定（示範）。', subs: ['基本資料', '照片顯示設定'], kw: ['個人資料', '照片', '聯絡資料'] },
+  { cat: '意見回饋與公共服務', items: [
+    { id: 'feedback', icon: 'chat', name: '課堂反應意見', route: '#/p/feedback', desc: '期中／期末課堂反應意見填寫。', subs: ['填寫課堂反應意見'], kw: ['課堂反應', '教學評量', '期末問卷', '意見調查'] },
+    { id: 'lost', icon: 'search', name: '反映問題／失物招領', route: '#/p/lost', desc: '校園問題反映與失物招領。', subs: ['問題反映', '失物招領'], kw: ['失物', '掉了', '遺失物', '反映', '問題反映'] }
+  ]},
+  { cat: '個人帳號', items: [
+    { id: 'profile', icon: 'user', name: '個人資料', route: '#/p/profile', desc: '基本資料與東吳人資料庫照片顯示設定（示範）。', subs: ['基本資料', '照片顯示設定'], kw: ['個人資料', '照片', '聯絡資料', '東吳人資料庫'] },
+    { id: 'mail', icon: 'mail', name: '校園信箱', route: '#/p/mail', desc: '學校信箱收件匣（示範內容）。', kw: ['信箱', 'email', 'e-mail', 'mail', '郵件', 'webmail'] },
     { id: 'asla', icon: 'chat', name: '阿斯拉助手', action: 'open-asla', built: true, desc: '用問的找功能：「期中退選在哪」「今天有什麼課」。', kw: ['阿斯拉', '助手', '聊天'] },
     { id: 'settings', icon: 'gear', name: '示範設定', route: '#/settings', built: true, desc: '切換示範日期時間、重設示範資料。', kw: ['設定', '示範', '重設', '日期'] }
   ]}

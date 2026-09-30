@@ -16,7 +16,7 @@
     const side = S.$('.hub-side'); const hub = S.$('.hub'); const hero = S.$('.hub-hello');
     const main = S.$('.hub-main'); const rail = S.$('.hub-rail');
     if (!side || !hub || !hero || window.innerWidth < 900) {
-      [side, hero].forEach((el) => { if (el) { el.style.left = ''; el.style.top = ''; el.style.width = ''; } });
+      [side, hero].forEach((el) => { if (el) { el.style.left = ''; el.style.top = ''; el.style.width = ''; el.style.maxHeight = ''; } });
       [main, rail].forEach((el) => { if (el) el.style.marginTop = ''; });
       return;
     }
@@ -26,6 +26,7 @@
     side.style.left = left;
     const gap = hero.offsetHeight + 20;
     side.style.top = (78 + gap) + 'px';
+    side.style.maxHeight = `calc(100vh - ${78 + gap + 16}px)`; /* 依實際 top 算高度，最後一個類別才捲得到 */
     if (main) main.style.marginTop = gap + 'px';
     if (rail) rail.style.marginTop = gap + 'px';
   }
@@ -96,16 +97,18 @@
 
   function eventsSection() {
     const evs = S.upcomingEvents(8);
+    /* 時間軸：左側日期、中間線與類別色點、右側標題＋「類別・倒數」一行 */
+    const T = S.DS.getEventTypes();
     const rows = evs.map((e) => {
       const cd = S.countdown(e);
-      return `<a class="ev-row ${cd.urgent ? 'is-urgent' : ''} ${cd.state === 'ongoing' ? 'is-ongoing' : ''}" href="${esc(e.route || '#/calendar')}">
-        <div class="ev-count ${S.DS.getEventTypes()[e.type].cls}"><b>${cd.big}</b><small>${cd.unit || ''}</small></div>
-        <div class="ev-body"><div class="ev-line">${S.evTag(e)}${cd.state === 'ongoing' ? '<span class="ev-on">進行中</span>' : ''}</div>
-          <h3>${esc(e.title)}</h3><p>${S.eventRange(e)}</p></div>${S.icon('right', 'chev')}</a>`;
+      const until = e.end && e.end !== e.start ? `至 ${S.fmtDate(e.end, false)}・` : '';
+      return `<a class="tl-item ${cd.urgent ? 'is-urgent' : ''} ${cd.state === 'ongoing' ? 'is-ongoing' : ''}" href="${esc(e.route || '#/calendar')}">
+        <span class="tl-date">${S.fmtDate(e.start, false)}</span><span class="tl-rail"><span class="tl-dot ${T[e.type].cls}"></span></span>
+        <span class="tl-body"><b>${esc(e.title)}</b><small>${T[e.type].name}・${until}<span class="tl-when">${esc(cd.label)}</span></small></span></a>`;
     }).join('');
     return `<section class="card sec-events" aria-labelledby="h-ev">
       <div class="sec-head"><h2 id="h-ev">${S.icon('calendar')}行事曆</h2><a class="link-more" href="#/calendar">看全部 ${S.icon('right')}</a></div>
-      ${rows ? `<div class="ev-list">${rows}</div>` : '<div class="empty">最近沒有全校事務。</div>'}</section>`;
+      ${rows ? `<div class="tl">${rows}</div>` : '<div class="empty">最近沒有全校事務。</div>'}</section>`;
   }
 
   const COMMON_SEED = ['course', 'timetable', 'grades', 'calendar', 'fee', 'dorm', 'scholarship', 'news'];
@@ -236,7 +239,7 @@
           ${aslaPromoCard()}
           <section class="card hub-common" aria-labelledby="h-common">
             <div class="sec-head"><h2 id="h-common">${query ? '搜尋結果' : (cat || '常用功能')}</h2>
-              <button type="button" class="btn btn-sm" id="hub-all">${mode === 'all' && !cat && !query ? '只看常用' : '全部功能'}</button>
+              <a class="btn btn-sm" id="hub-all" href="#/more">全部功能</a>
             </div>
             <div class="hub-feats" id="hub-feats">${featGrid()}</div>
           </section>
@@ -252,11 +255,10 @@
       placeHubSide();
       const qEl = S.$('#hub-q');
       const paint = () => {
-        const box = S.$('#hub-feats'); const title = S.$('#h-common'); const allBtn = S.$('#hub-all');
+        const box = S.$('#hub-feats'); const title = S.$('#h-common');
         if (!box) return;
         box.innerHTML = featGrid();
         if (title) title.textContent = query ? '搜尋結果' : (cat || '常用功能');
-        if (allBtn) allBtn.textContent = mode === 'all' && !cat && !query ? '只看常用' : '全部功能';
         S.$$('.hub-cat').forEach((b) => { b.classList.toggle('on', !query && b.dataset.cat === cat && (cat || mode === 'common')); });
       };
       S.$('.asla-promo').addEventListener('click', (e) => {
@@ -266,11 +268,6 @@
       });
       qEl.addEventListener('input', () => { query = qEl.value.trim(); paint(); });
       S.$('#hub-search').addEventListener('submit', (e) => { e.preventDefault(); query = qEl.value.trim(); paint(); });
-      S.$('#hub-all').addEventListener('click', () => {
-        query = ''; qEl.value = ''; cat = '';
-        mode = mode === 'all' ? 'common' : 'all';
-        paint();
-      });
       S.$('.hub-side').addEventListener('click', (e) => {
         const b = e.target.closest('[data-cat]'); if (!b) return;
         query = ''; qEl.value = '';

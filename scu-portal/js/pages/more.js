@@ -27,9 +27,9 @@
     return n ? html : `<div class="empty">找不到「${esc(q)}」。<br><button class="btn btn-sm btn-primary" type="button" data-act="open-asla" data-q="${esc(q)}">問問阿斯拉</button></div>`;
   }
   S.views.more = {
-    tab: 'more', title: '所有功能',
+    tab: 'more', title: '全部功能',
     render(p) {
-      return `<div class="page-head"><div><h1>所有功能</h1><p class="muted small">全部都在站內完成，不用跳到其他系統</p></div></div>
+      return `<div class="page-head"><div><h1>全部功能</h1><p class="muted small">全部都在站內完成，不用跳到其他系統</p></div></div>
         <div class="searchbar">${S.icon('search')}<input id="more-q" type="search" placeholder="找功能：就貸、宿舍、請假、期中退選…" value="${esc(p.get('q') || '')}" aria-label="搜尋功能"></div>
         <div id="ftiles">${renderTiles(p.get('q'))}</div>`;
     },
@@ -82,10 +82,10 @@
     title: (sub) => (DS.getFeature(sub) || { name: '功能' }).name,
     render(p, sub) {
       const f = DS.getFeature(sub);
-      if (!f) return `<div class="empty">找不到這個功能。<br><a class="btn btn-sm" href="#/more">回所有功能</a></div>`;
+      if (!f) return `<div class="empty">找不到這個功能。<br><a class="btn btn-sm" href="#/more">回全部功能</a></div>`;
       const sp = special[f.id] ? special[f.id]() : '';
       const subs = f.subs && f.subs.length ? `<section class="card section"><h3>這一頁之後可以辦理</h3><div class="clist">${f.subs.map((s) => `<button type="button" class="sub-row" data-act="demo-only"><span>${esc(s)}</span>${S.icon('right')}</button>`).join('')}</div></section>` : '';
-      return `<a class="back" href="#/more">${S.icon('back')}所有功能</a>
+      return `<a class="back" href="#/more">${S.icon('back')}全部功能</a>
         <div class="page-head"><div class="ph-ic">${S.icon(f.icon)}</div><div><h1>${esc(f.name)}</h1><p class="muted small">${esc(f.catName)}・${esc(f.desc)}</p></div></div>
         ${sp}${subs}${relatedEvents(f.id)}
         <p class="tiny muted demo-note">此頁為示範頁，內容與資料皆為虛構；完整功能待後續建置。</p>`;
@@ -98,7 +98,7 @@
     render() {
       const presets = [['2026-09-30', '10:30', '上課中（預設）'], ['2026-09-30', '13:00', '午休，下一堂快開始'], ['2026-09-30', '18:30', '今天課都上完了'], ['2026-10-03', '10:00', '週六（沒有課）'], ['2026-10-09', '10:00', '國慶日補假'], ['2026-11-20', '09:00', '期中退選期間']];
       const P = DS.getProfile();
-      return `<a class="back" href="#/more">${S.icon('back')}所有功能</a>
+      return `<a class="back" href="#/more">${S.icon('back')}全部功能</a>
         <div class="page-head"><div><h1>示範設定</h1><p class="muted small">給展示用：切換「今天」的日期時間，網站其他頁會跟著變</p></div></div>
         <section class="card"><h3>示範時間</h3>
           <p class="small">目前：<b>${S.today} ${S.NOW.time}</b>（${S.NOW.fromUrl ? '由網址參數指定' : '這台電腦的系統時間'}）</p>
