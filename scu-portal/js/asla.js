@@ -18,7 +18,7 @@
 
   /* ---- 共用答案產生器 ---- */
   function feat(id, lead) {
-    const f = DS.getFeature(id);
+    const f = S.featureView ? S.featureView(DS.getFeature(id)) : DS.getFeature(id);   /* 名稱跟新選單一致 */
     return { text: `${lead ? lead + '\n' : ''}可以到站內「${f.name}」頁：${f.desc}`, src: SRC, actions: [f.action ? { label: '打開' + f.name, act: f.action } : { label: `前往「${f.name}」`, hash: f.route }] };
   }
   function ev(id) { return DS.getEvents().find((e) => e.id === id); }
@@ -234,9 +234,10 @@
   }
   function fuzzy(text) {
     const out = [];
-    DS.getFeatures().forEach((g) => g.items.forEach((it) => {
+    DS.getFeatures().forEach((g) => g.items.forEach((raw) => {
+      const it = S.featureView ? S.featureView(raw) : raw;   /* 按鈕顯示新選單的名稱；新舊名稱都拿來比對 */
       let sc = 0;
-      (it.kw || []).concat(it.subs || [], [it.name]).forEach((k) => { const nk = norm(k); for (let i = 0; i + 2 <= nk.length; i++) if (text.indexOf(nk.substr(i, 2)) >= 0) { sc++; break; } });
+      (it.kw || []).concat(it.subs || [], [it.name, raw.name]).forEach((k) => { const nk = norm(k); for (let i = 0; i + 2 <= nk.length; i++) if (text.indexOf(nk.substr(i, 2)) >= 0) { sc++; break; } });
       if (sc) out.push(Object.assign({ sc }, it));
     }));
     return out.sort((a, b) => b.sc - a.sc).slice(0, 3);
@@ -391,11 +392,11 @@
     try { localStorage.setItem(DOT_KEY, JSON.stringify({ nx, ny })); } catch (e) { /* 記不住就只留在這次畫面 */ }
   }
   function clearDotPos() { ['left', 'top', 'right', 'bottom'].forEach((k) => { dot.style[k] = ''; }); }
+  const dotW = () => dot.offsetWidth || 40, dotH = () => dot.offsetHeight || 40;
   function placeDot(x, y) {
     const margin = 8;
-    const size = dot.offsetWidth || 40;
-    const maxX = Math.max(margin, window.innerWidth - size - margin);
-    const maxY = Math.max(margin, window.innerHeight - size - margin);
+    const maxX = Math.max(margin, window.innerWidth - dotW() - margin);
+    const maxY = Math.max(margin, window.innerHeight - dotH() - margin);
     x = Math.min(Math.max(margin, x), maxX);
     y = Math.min(Math.max(margin, y), maxY);
     dot.style.left = x + 'px'; dot.style.top = y + 'px';
@@ -405,8 +406,7 @@
   function applyStoredDotPos() {
     const frac = readDotFrac();
     if (!frac || !Number.isFinite(frac.nx) || !Number.isFinite(frac.ny)) { clearDotPos(); return; }
-    const size = dot.offsetWidth || 40;
-    placeDot(frac.nx * Math.max(1, window.innerWidth - size), frac.ny * Math.max(1, window.innerHeight - size));
+    placeDot(frac.nx * Math.max(1, window.innerWidth - dotW()), frac.ny * Math.max(1, window.innerHeight - dotH()));
   }
   let dotDrag = null;
   dot.addEventListener('pointerdown', (e) => {
@@ -427,8 +427,7 @@
     if (!moved) return;
     dot.dataset.dragged = '1';
     const pos = placeDot(parseFloat(dot.style.left), parseFloat(dot.style.top));
-    const size = dot.offsetWidth || 40;
-    writeDotFrac(pos.x / Math.max(1, window.innerWidth - size), pos.y / Math.max(1, window.innerHeight - size));
+    writeDotFrac(pos.x / Math.max(1, window.innerWidth - dotW()), pos.y / Math.max(1, window.innerHeight - dotH()));
   });
   dot.addEventListener('click', (e) => {
     if (dot.dataset.dragged === '1') { dot.dataset.dragged = ''; e.preventDefault(); e.stopPropagation(); return; }
@@ -442,6 +441,19 @@
     if (!dot.hidden) applyStoredDotPos();
   });
 
+  /* 右下角小機器人：對話框沒開、畫面上也看不到阿斯拉卡片時就顯示。
+     阿斯拉卡片只在首頁「常用」出現；首頁點了左側分類、或到其他頁面，卡片不見了，機器人就出來。 */
+  dot.querySelector('.asla-dot-bot').innerHTML = S.ASLA_MASCOT || '';
+  function syncDot() {
+    const promo = document.querySelector('.asla-promo');
+    const promoShown = !!promo && promo.offsetParent !== null;
+    const show = panel.hidden && !promoShown;
+    if (show && dot.hidden) { dot.hidden = false; applyStoredDotPos(); } else if (!show) dot.hidden = true;
+  }
+  S.syncAslaDot = syncDot;
+  window.addEventListener('hashchange', () => setTimeout(syncDot, 0));   /* 等新頁面畫完再判斷 */
+  setTimeout(syncDot, 0);
+
   function open(q) {
     dot.hidden = true;
     panel.hidden = false;
@@ -449,7 +461,7 @@
     if (!log.childElementCount) botReply({ text: '嗨，我是阿斯拉。想知道什麼？直接用問的，我帶你到站內對應的頁面。', src: SRC });
     if (q) ask(q); else setTimeout(() => input.focus(), 30);
   }
-  function minimize() { panel.hidden = true; dot.hidden = false; applyStoredDotPos(); }
+  function minimize() { panel.hidden = true; syncDot(); }
   S.openAsla = open; S.askAsla = ask;
 
   $('#asla-close').addEventListener('click', minimize);
