@@ -81,6 +81,14 @@
       u[id] = (u[id] || 0) + 1;
       store.set('use', u);
     },
+    /* 這台電腦上「全部功能」細項（SCU.MENU 的細項名稱）被點的次數。首頁「最近常用」依這個排序，不上傳。 */
+    leafUse: () => store.get('leafUse', {}),
+    bumpLeaf(label) {
+      if (!label) return;
+      const u = store.get('leafUse', {});
+      u[label] = (u[label] || 0) + 1;
+      store.set('leafUse', u);
+    },
     featureForHash(hash) {
       const path = String(hash || '').replace(/^#/, '');
       if (!path || path === '/home' || path.startsWith('/home?')) return null;

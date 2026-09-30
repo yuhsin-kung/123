@@ -12,11 +12,24 @@
      只有中間／右側欄（常用功能、今天課表、行事曆…）會捲動。
      left／width 用 JS 量 .hub 實際邊界，比純 CSS 的 100vw 精準（100vw 在有捲軸時會多算捲軸寬度）。
      中間／右側欄的 margin-top 讓出「晚安」那排固定佔用的高度，不會被蓋住。 */
+  /* 左側分類的中標題小字只顯示一行：放不下時只留完整放得下的中標題，後面空一格接「...」，不把詞切一半 */
+  function fitCatSubs() {
+    S.$$('.hub-cat small[data-subs]').forEach((el) => {
+      const all = el.dataset.subs.split('・');
+      el.textContent = all.join('・');
+      if (!el.clientWidth || el.scrollWidth <= el.clientWidth) return;
+      for (let n = all.length - 1; n >= 1; n--) {
+        el.textContent = all.slice(0, n).join('・') + ' ...';   /* 英文句點貼在字底，不用中文字型會置中的「…」 */
+        if (el.scrollWidth <= el.clientWidth) return;
+      }
+    });
+  }
   function placeHubSide() {
+    fitCatSubs();
     const side = S.$('.hub-side'); const hub = S.$('.hub'); const hero = S.$('.hub-hello');
     const main = S.$('.hub-main'); const rail = S.$('.hub-rail');
     if (!side || !hub || !hero || window.innerWidth < 900) {
-      [side, hero].forEach((el) => { if (el) { el.style.left = ''; el.style.top = ''; el.style.width = ''; el.style.maxHeight = ''; } });
+      [side, hero].forEach((el) => { if (el) { el.style.left = ''; el.style.top = ''; el.style.width = ''; el.style.maxHeight = ''; el.style.gap = ''; } });
       [main, rail].forEach((el) => { if (el) el.style.marginTop = ''; });
       return;
     }
@@ -24,11 +37,20 @@
     hero.style.left = left;
     hero.style.width = hub.getBoundingClientRect().width + 'px';
     side.style.left = left;
-    const gap = hero.offsetHeight + 20;
+    const gap = hero.offsetHeight + 12;
     side.style.top = (78 + gap) + 'px';
     side.style.maxHeight = `calc(100vh - ${78 + gap + 16}px)`; /* 依實際 top 算高度，最後一個類別才捲得到 */
-    if (main) main.style.marginTop = gap + 'px';
-    if (rail) rail.style.marginTop = gap + 'px';
+    /* 按鈕間距依剩下的高度平均分配，讓選單大致填滿到畫面底部；最少 8px、最多 30px */
+    const btns = side.children.length;
+    if (btns > 1) {
+      const avail = window.innerHeight - (78 + gap) - 24;
+      const used = [...side.children].reduce((s, b) => s + b.offsetHeight, 0);
+      side.style.gap = Math.max(8, Math.min(30, Math.floor((avail - used) / (btns - 1)))) + 'px';
+    }
+    /* 中間／右側欄的頂端對齊左側選單的頂端（不再多空一段） */
+    const push = Math.max(0, 78 + gap - (hub.getBoundingClientRect().top + window.scrollY)) + 'px';
+    if (main) main.style.marginTop = push;
+    if (rail) rail.style.marginTop = push;
   }
   window.addEventListener('resize', placeHubSide);
 
@@ -62,31 +84,34 @@
   }
 
   const ASLA_MASCOT = `<svg viewBox="0 0 100 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <ellipse cx="50" cy="111" rx="22" ry="4" fill="#f3dcd9"/>
+    <ellipse class="ab-shadow" cx="50" cy="111" rx="22" ry="4" fill="#f3dcd9"/>
+    <g class="ab-body">
     <line x1="50" y1="14" x2="50" y2="4" stroke="#e3b9b2" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="50" cy="4" r="4" fill="#8b1a1a"/>
+    <circle class="ab-light" cx="50" cy="4" r="4" fill="#8b1a1a"/>
     <rect x="10" y="30" width="8" height="18" rx="4" fill="#eac8c3"/>
     <rect x="82" y="30" width="8" height="18" rx="4" fill="#eac8c3"/>
-    <path d="M74 68 Q90 62 88 46" stroke="#f3dcd9" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <circle cx="88" cy="44" r="6" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
+    <g class="ab-arm"><path d="M74 68 Q90 62 88 46" stroke="#f3dcd9" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="88" cy="44" r="6" fill="#fff" stroke="#f3dcd9" stroke-width="2"/></g>
     <path d="M26 70 Q14 76 14 90" stroke="#f3dcd9" stroke-width="7" fill="none" stroke-linecap="round"/>
     <rect x="34" y="92" width="10" height="14" rx="5" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
     <rect x="56" y="92" width="10" height="14" rx="5" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
     <rect x="26" y="62" width="48" height="34" rx="17" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
     <circle cx="50" cy="79" r="6" fill="#8b1a1a"/>
     <rect x="20" y="10" width="60" height="50" rx="25" fill="#fff" stroke="#f3dcd9" stroke-width="2"/>
-    <circle cx="38" cy="36" r="4" fill="#2a2320"/>
-    <circle cx="62" cy="36" r="4" fill="#2a2320"/>
-    <circle cx="30" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
-    <circle cx="70" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
+    <g class="ab-eyes"><circle cx="38" cy="36" r="4" fill="#2a2320"/>
+    <circle cx="62" cy="36" r="4" fill="#2a2320"/></g>
+    <circle class="ab-cheek" cx="30" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
+    <circle class="ab-cheek" cx="70" cy="42" r="3.5" fill="#f6b8c6" opacity=".8"/>
     <path d="M44 42 Q50 47 56 42" stroke="#2a2320" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
   </svg>`;
+  S.ASLA_MASCOT = ASLA_MASCOT;   /* 其他頁右下角的阿斯拉小機器人也用這張（asla.js） */
   const ASLA_PROMO_CHIPS = ['我要申請宿舍', '怎麼退選課程？', '畢業需要多少學分？'];
   function aslaPromoCard() {
     return `<section class="card asla-promo" aria-labelledby="h-asla-promo">
       <div class="asla-promo-bot">${ASLA_MASCOT}</div>
       <div class="asla-promo-body">
-        <div class="asla-promo-title"><h2 id="h-asla-promo">阿斯拉 AI 助手</h2><span class="asla-beta">Beta</span></div>
+        <div class="asla-promo-title"><h2 id="h-asla-promo">阿斯拉 AI 助手</h2></div>
         <p class="asla-promo-lead">不知道該去哪裡辦？</p>
         <p class="asla-promo-desc">告訴我你的問題，我幫你找功能、查資料！</p>
         <div class="asla-promo-chips">${ASLA_PROMO_CHIPS.map((c) => `<button type="button" data-q="${esc(c)}">「${esc(c)}」</button>`).join('')}</div>
@@ -111,48 +136,53 @@
       ${rows ? `<div class="tl">${rows}</div>` : '<div class="empty">最近沒有全校事務。</div>'}</section>`;
   }
 
-  const COMMON_SEED = ['course', 'timetable', 'grades', 'calendar', 'fee', 'dorm', 'scholarship', 'news'];
-  function commonItems(items) {
-    const counts = DS.useCounts();
-    const ranked = items.filter((it) => counts[it.id]).sort((a, b) => counts[b.id] - counts[a.id] || a.name.localeCompare(b.name, 'zh-Hant'));
-    const ids = ranked.slice(0, 8).map((it) => it.id);
-    if (!ids.length) return COMMON_SEED.map((id) => items.find((it) => it.id === id)).filter(Boolean);
-    COMMON_SEED.forEach((id) => { if (ids.length < 8 && ids.indexOf(id) < 0) ids.push(id); });
-    return ids.map((id) => items.find((it) => it.id === id)).filter(Boolean);
-  }
   let mode = 'common';
   let cat = '';
   let query = '';
 
-  function allItems() {
-    const out = [];
-    DS.getFeatures().forEach((g) => g.items.forEach((it) => out.push(Object.assign({ cat: g.cat }, it))));
-    return out;
+  /* 中間卡片一律用「中標題＋細項按鈕」的樣式（跟全部功能頁、左側分類同一套 SCU.MENU） */
+  const menuTree = () => (S.menuTree ? S.menuTree() : []);
+  const group = (title, leaves, withCtx) => `<div class="mc-group"><h3>${esc(title)}</h3><div class="mc-leaves">${leaves.map((l) => S.menuLeaf(l, !!withCtx)).join('')}</div></div>`;
+  const wrap = (html) => `<div class="hub-menu">${html}</div>`;
+
+  /* 還沒有使用紀錄時先推薦的細項（名稱要跟 SCU.MENU 的細項一致） */
+  const COMMON_SEED = ['網路選課', '功課表查詢', '學期成績', '註冊繳費', '宿舍申請', '線上請假', '可申請查詢', '教室資訊查詢', '期末退修申請', '活動報名'];
+  const COMMON_MAX = 10;   /* 桌機一排 5 個，剛好兩排 */
+  function commonMenu() {
+    const all = []; const seen = {};
+    menuTree().forEach((c) => c.groups.forEach((g) => g.leaves.forEach((l) => { if (!seen[l.label]) { seen[l.label] = 1; all.push(l); } })));
+    /* 最多 10 個：點過的依次數排前面，不夠的用 COMMON_SEED 補滿；排成等寬格子 */
+    const counts = DS.leafUse();
+    const list = all.filter((l) => counts[l.label]).sort((a, b) => counts[b.label] - counts[a.label]).slice(0, COMMON_MAX);
+    COMMON_SEED.forEach((n) => { const l = all.find((x) => x.label === n); if (l && list.length < COMMON_MAX && list.indexOf(l) < 0) list.push(l); });
+    return wrap(`<div class="common-grid">${list.map((l) => S.menuLeaf(l, true)).join('')}</div>`);
   }
-  function featButton(it) {
-    const inner = `<span class="hub-ic">${S.icon(it.icon)}</span><b>${esc(it.name)}</b>`;
-    return it.action
-      ? `<button type="button" class="hub-feat" data-act="${esc(it.action)}">${inner}</button>`
-      : `<a class="hub-feat" href="${esc(it.route)}">${inner}</a>`;
+  /* 左側選了某一類：只顯示那一類 */
+  function catMenu() {
+    const c = menuTree().find((x) => x.name === cat); if (!c) return '';
+    return wrap(c.groups.map((g) => group(g.title, g.leaves)).join(''));
   }
-  function visibleItems() {
-    let items = allItems();
-    if (query) {
-      const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-      items = items.filter((it) => terms.every((t) => [it.cat, it.name, it.desc, (it.kw || []).join(' ')].join(' ').toLowerCase().indexOf(t) >= 0));
-    } else if (cat) items = items.filter((it) => it.cat === cat);
-    else if (mode === 'common') items = commonItems(items);
-    return items;
+  /* 搜尋：比對分類、中標題、細項與功能關鍵字，結果依分類分組 */
+  function searchMenu() {
+    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const html = menuTree().map((c) => {
+      const hits = [];
+      c.groups.forEach((g) => g.leaves.forEach((l) => { const s = (c.name + ' ' + g.title + ' ' + l.text).toLowerCase(); if (terms.every((t) => s.indexOf(t) >= 0)) hits.push(l); }));
+      return hits.length ? group(c.name, hits, true) : '';
+    }).join('');
+    return html ? wrap(html) : `<p class="empty">找不到「${esc(query)}」。</p>`;
   }
   function featGrid() {
-    const items = visibleItems();
-    if (!items.length) return `<p class="empty">找不到「${esc(query)}」。</p>`;
-    return items.map(featButton).join('');
+    if (query) return searchMenu();
+    return cat ? catMenu() : commonMenu();
   }
   function sideNav() {
-    const cats = DS.getFeatures().map((g) => g.cat);
-    const btn = (id, label) => `<button type="button" class="hub-cat ${(!query && cat === id && (id || mode === 'common')) ? 'on' : ''}" data-cat="${esc(id)}">${esc(label)}</button>`;
-    return btn('', '常用') + cats.map((c) => `<button type="button" class="hub-cat ${!query && cat === c ? 'on' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+    /* 每個分類底下用小字列出它的中標題，讓人不用點開就知道裡面有什麼 */
+    const btn = (id, label, sub) => `<button type="button" class="hub-cat ${(!query && cat === id && (id || mode === 'common')) ? 'on' : ''}" data-cat="${esc(id)}"><b>${esc(label)}</b><small>${esc(sub)}</small></button>`;
+    return btn('', '常用', '依你的使用自動排序') + (S.MENU || []).map((c) => {
+      const subs = c.groups.map((g) => g[0]).join('・');
+      return `<button type="button" class="hub-cat ${!query && cat === c.name ? 'on' : ''}" data-cat="${esc(c.name)}" title="${esc(subs)}"><b>${esc(c.name)}</b><small data-subs="${esc(subs)}">${esc(subs)}</small></button>`;
+    }).join('');
   }
 
   function publicHome() {
@@ -231,7 +261,7 @@
           <h1 tabindex="0">${greet(S.nowMin)}，${esc(P.name)}<span class="hello-date">${S.fmtDate(S.today)} ${S.NOW.time}${wk ? `・第 ${wk} 週` : ''}<br>${esc(S.SEMESTER.label)}</span></h1>
         </section>
         <nav class="hub-side" aria-label="功能選單">${sideNav()}</nav>
-        <div class="hub-main">
+        <div class="hub-main ${cat && !query ? 'cat-mode' : ''}">
           <form class="hub-search" id="hub-search">
             ${S.icon('search')}
             <input id="hub-q" type="search" placeholder="搜尋你想辦的事，例如：選課、宿舍、繳費、請假" value="${esc(query)}" aria-label="搜尋功能">
@@ -259,6 +289,9 @@
         if (!box) return;
         box.innerHTML = featGrid();
         if (title) title.textContent = query ? '搜尋結果' : (cat || '常用功能');
+        /* 選了左側某一類：中間只留那一類的內容（搜尋框、阿斯拉卡片先收起來；點「常用」就回來） */
+        S.$('.hub-main').classList.toggle('cat-mode', !!cat && !query);
+        if (S.syncAslaDot) S.syncAslaDot();   /* 阿斯拉卡片收起來時，右下角機器人要出現 */
         S.$$('.hub-cat').forEach((b) => { b.classList.toggle('on', !query && b.dataset.cat === cat && (cat || mode === 'common')); });
       };
       S.$('.asla-promo').addEventListener('click', (e) => {
@@ -274,6 +307,7 @@
         cat = b.dataset.cat;
         mode = cat ? 'all' : 'common';
         paint();
+        window.scrollTo({ top: 0 });
       });
     }
   };

@@ -70,6 +70,63 @@ SCU.FEATURES = [
   ]}
 ];
 
+/* 「全部功能」頁的 11 大類字卡（pages/more.js 讀這份）。
+ * 每類：[中標題, [[細項, 去哪]...]]；沒有細項的中標題只寫 [中標題, 去哪]，細項會自動用中標題本身。
+ * 「去哪」寫功能 id（對到上面 SCU.FEATURES 的 route）、直接寫 #/ 開頭的網址，或 act: 開頭的站內動作（例如 act:open-asla 打開阿斯拉）。
+ * 這裡只管頁面上怎麼分類；網址、阿斯拉關鍵字仍以 SCU.FEATURES 為準，改分類不會動到網址。 */
+SCU.MENU = [
+  { name: '選課與課程', icon: 'course', groups: [
+    ['課表查詢', [['功課表查詢', '#/timetable'], ['全校課表暨授課計劃查詢', '#/timetable?focus=class'], ['全校課務資料查詢', '#/timetable?focus=class']]],
+    ['選課作業', [['學生選課查對表', '#/course?tab=cart'], ['網路選課', '#/course'], ['選課清單確認維護', '#/course?tab=cart'], ['選課清單查詢', '#/course?tab=cart']]],
+    ['選課輔導', [['選課輔導紀錄查詢', 'advising'], ['預選表列印', 'advising'], ['選課輔導問卷調查', 'advising'], ['英文適用級別查詢', 'advising']]],
+    ['退修', [['期末退修申請', 'final-drop'], ['操作說明', 'final-drop'], ['申請進度查詢', 'final-drop']]],
+    ['暑修', [['暑期班課程查詢', 'summer'], ['選課報名', 'summer'], ['報名表列印', 'summer'], ['繳費單', 'summer']]]
+  ]},
+  { name: '雙輔第二專長', icon: 'target', groups: [
+    ['雙輔跨作業', [['學生申請作業', 'double'], ['查詢歷年紀錄', 'double'], ['查詢申請條件', 'double'], ['學生放棄作業', 'double']]],
+    ['第二專長作業', [['第二專長選課', 'second'], ['第二專長申請', 'second'], ['第二專長放棄', 'second'], ['第二專長狀態查詢', 'second']]]
+  ]},
+  { name: '學業與學籍', icon: 'chart', groups: [
+    ['成績查詢', [['學期成績', '#/grades'], ['東吳英檢成績', '#/grades'], ['期末學期成績單郵寄登記', 'cert']]],
+    ['畢業標準查詢', [['畢業學分進度表', '#/grades?focus=grad']]],
+    ['學業關懷查詢', 'academic-care'],
+    ['在學證明查詢', 'cert']
+  ]},
+  { name: '繳費與財務補助', icon: 'pay', groups: [
+    ['繳費', [['註冊繳費', 'fee'], ['學雜費資料', 'fee'], ['欠費金額', 'fee'], ['退補費', 'fee'], ['學生會會費繳費單', 'fee']]],
+    ['就學貸款', [['線上申請', 'loan'], ['上傳撥款通知書', 'loan'], ['貸款後餘額繳費單', 'loan'], ['貸款進度查詢', 'loan']]],
+    ['獎助學金', [['可申請查詢', 'scholarship'], ['未領證明', 'scholarship'], ['申請紀錄', 'scholarship'], ['得獎紀錄查詢', 'scholarship'], ['急難救助申請', 'emergency']]]
+  ]},
+  { name: '住宿', icon: 'home', groups: [
+    ['宿舍申請', [['宿舍申請', 'dorm'], ['申請狀態查詢', 'dorm'], ['特殊個案申請', 'dorm'], ['床位選填', 'dorm']]]
+  ]},
+  { name: '空間與設備預約', icon: 'building', groups: [
+    ['場地租借', [['自習教室', 'venue'], ['空教室', 'venue'], ['電腦教室', 'venue'], ['社團教室', 'venue'], ['教室資訊查詢', 'venue']]],
+    ['設備租借', [['置物櫃', 'equipment'], ['社團器材', 'equipment']]],
+    ['其他', [['閱覽室劃位', 'reading-room'], ['海報欄位申請', 'poster']]]
+  ]},
+  { name: '社團與活動', icon: 'masks', groups: [
+    ['社團', [['期初登錄', 'club'], ['期末改選', 'club'], ['經費申請／查詢', 'club'], ['個人經歷認證', 'club'], ['團體經歷認證', 'club']]],
+    ['活動報名', 'events']
+  ]},
+  { name: '工讀、實習與職涯', icon: 'bag', groups: [
+    ['工讀', [['工讀生出勤時數', 'work'], ['工讀生薪水查詢', 'work']]],
+    ['教學助理線上確認', 'ta'], ['實習', 'intern'], ['證照獎勵', 'intern']
+  ]},
+  { name: '校園生活', icon: 'heart', groups: [
+    ['學生請假', [['線上請假', 'leave'], ['請假紀錄', 'leave']]], ['諮商', [['初談預約', 'counsel'], ['我的預約', 'counsel']]], ['保險理賠', 'insurance'],
+    ['卡務', [['停車卡儲值紀錄', 'cards'], ['影印卡查詢', 'cards'], ['悠遊卡線上鎖卡', 'card']]]
+  ]},
+  { name: '意見回饋與公共服務', icon: 'chat', groups: [
+    ['課堂反應意見填寫', 'feedback'], ['反映問題', 'lost'], ['失物招領', 'lost']
+  ]},
+  { name: '個人帳號', icon: 'user', groups: [
+    ['東吳人資料庫', 'profile'], ['信箱', 'mail'],
+    ['示範設定', [['調整示範日期時間', '#/settings'], ['重設示範資料', '#/settings']]],
+    ['阿斯拉助手', 'act:open-asla']
+  ]}
+];
+
 SCU.featureById = function (id) {
   for (const g of SCU.FEATURES) for (const it of g.items) if (it.id === id) return Object.assign({ catName: g.cat }, it);
   return null;

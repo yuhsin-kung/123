@@ -11,29 +11,137 @@
   'use strict';
   const S = window.SCU; const esc = S.esc; const DS = S.DS; const st = S.state;
 
-  /* ---------------- 更多 ---------------- */
-  function tile(it) {
-    const inner = `<span class="ft-ic">${S.icon(it.icon)}</span><span class="ft-t"><b>${esc(it.name)}</b><small>${esc(it.desc)}</small></span>${it.built ? '' : '<span class="ft-demo">示範頁</span>'}`;
-    return it.action ? `<button type="button" class="ft" data-act="${it.action}">${inner}</button>` : `<a class="ft" href="${esc(it.route)}">${inner}</a>`;
+  /* ---------------- 更多：11 大類字卡（資料在 data-features.js 的 SCU.MENU） ---------------- */
+  let openCat = -1;   /* 目前展開的字卡；一次只展開一張 */
+  function target(to) {
+    if (to.indexOf('act:') === 0) {
+      const act = to.slice(4); let feat = null;
+      DS.getFeatures().forEach((g) => g.items.forEach((it) => { if (it.action === act) feat = it; }));
+      return { act, feat };
+    }
+    if (to.charAt(0) === '#') return { route: to, feat: DS.featureForHash(to) };
+    const f = DS.getFeature(to);
+    return { route: f ? f.route : '#/more', feat: f };
+  }
+  /* 把 SCU.MENU 攤平成 [{ title, leaves:[{ label, route, text }] }]，text 給搜尋用（含功能關鍵字） */
+  function menu() {
+    return (S.MENU || []).map((c, ci) => ({
+      ci, name: c.name, icon: c.icon,
+      groups: c.groups.map(([title, rest]) => ({
+        title,
+        leaves: (Array.isArray(rest) ? rest : [[title, rest]]).map(([label, to]) => {
+          const t = target(to); const f = t.feat || {};
+          return { label, group: title, cat: c.name, fid: t.feat ? t.feat.id : '', route: t.route, act: t.act, text: [label, f.name, f.desc, (f.kw || []).join(' ')].join(' ').toLowerCase() };
+        })
+      }))
+    }));
+  }
+  /* 細項上方的灰色小字：一律標中標題；中標題跟細項同名（例如宿舍申請）就改標大分類，避免重複 */
+  const ctxOf = (l) => (l.group && l.group !== l.label ? l.group : l.cat) || '';
+  /* 細項按鈕：一般是站內連結；act: 開頭的是站內動作（例如打開阿斯拉）。
+   * withCtx：常用、搜尋結果這種不同中標題混在一起的地方，在名稱上方用灰色小字標出它屬於哪裡 */
+  function leaf(l, withCtx) {
+    const ctx = withCtx === true ? ctxOf(l) : '';
+    const inner = `<span class="mc-leaf-t">${ctx ? `<small>${esc(ctx)}</small>` : ''}${esc(l.label)}</span><span class="mc-arr" aria-hidden="true">↗</span>`;
+    const k = `data-leaf="${esc(l.label)}"`;
+    return l.act ? `<button type="button" class="mc-leaf" ${k} data-act="${esc(l.act)}">${inner}</button>` : `<a class="mc-leaf" ${k} href="${esc(l.route)}">${inner}</a>`;
+  }
+  /* 任何頁面點了細項就記一次，首頁「最近常用」用 */
+  document.addEventListener('click', (e) => { const l = e.target.closest('.mc-leaf[data-leaf]'); if (l) DS.bumpLeaf(l.dataset.leaf); });
+  S.menuTree = menu; S.menuLeaf = leaf;   /* 首頁左側分類也用這份 */
+
+  /* 功能（SCU.FEATURES 的 id）在新分類裡的顯示名稱與大分類，示範頁標題和阿斯拉的按鈕都用這個，跟選單一致。
+   * 名稱依序判斷：
+   *   1. 細項整組佔中標題（不跟別的功能共用、也不是「其他」）→ 用中標題，幾組就用「／」連起來
+   *      例如 double →「雙輔跨作業」、intern →「實習／證照獎勵」
+   *   2. 只有一個細項 → 用細項名稱，例如 emergency →「急難救助申請」
+   *   3. 其他情況沿用原本的名稱，例如 scholarship →「獎助學金」
+   * 不在新分類裡的功能（期中退選、公告…）回傳 null，沿用原本的名稱與類別。 */
+  let infoMap = null;
+  function menuInfo(id) {
+    if (!infoMap) {
+      infoMap = {};
+      menu().forEach((c) => c.groups.forEach((g) => {
+        const owners = new Set(g.leaves.map((l) => l.fid));
+        g.leaves.forEach((l) => {
+          if (!l.fid) return;
+          const e = infoMap[l.fid] || (infoMap[l.fid] = { cat: c.name, groups: [], labels: [], ownsAll: true });
+          if (e.groups.indexOf(g.title) < 0) e.groups.push(g.title);
+          e.labels.push(l.label);
+          if (owners.size > 1 || g.title === '其他') e.ownsAll = false;
+        });
+      }));
+    }
+    const e = infoMap[id]; const f = DS.getFeature(id);
+    if (!e || !f) return null;
+    const name = e.ownsAll ? e.groups.join('／') : e.labels.length === 1 ? e.labels[0] : f.name;
+    return { cat: e.cat, name };
+  }
+  S.menuInfo = menuInfo;
+  /* 功能的顯示用資料：名稱與類別換成新分類的，其餘（網址、說明、關鍵字）照舊 */
+  S.featureView = (f) => { if (!f) return f; const i = menuInfo(f.id); return i ? Object.assign({}, f, { name: i.name, catName: i.cat }) : f; };
+  function card(c, open, groups) {
+    const num = String(c.ci + 1).padStart(2, '0');
+    const summary = c.groups.map((g) => g.title).join('・');
+    const body = open ? `<div class="mc-body" id="mc-body-${c.ci}">${groups.map((g) => `<div class="mc-group"><h3>${esc(g.title)}</h3>
+        <div class="mc-leaves">${g.leaves.map(leaf).join('')}</div></div>`).join('')}</div>` : '';
+    return `<section class="mcard ${open ? 'open' : ''}">
+      <button type="button" class="mc-head" data-cat="${c.ci}" aria-expanded="${open}" aria-controls="mc-body-${c.ci}">
+        <span class="mc-num">${num}</span><span class="mc-ic">${S.icon(c.icon)}</span>
+        <span class="mc-t"><b>${esc(c.name)}</b><small>${esc(summary)}</small></span>
+        <span class="mc-bg" aria-hidden="true">${num}</span></button>${body}</section>`;
   }
   function renderTiles(q) {
     const terms = String(q || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const match = (it, cat) => terms.every((t) => [cat, it.name, it.desc, (it.kw || []).join(' '), (it.subs || []).join(' ')].join(' ').toLowerCase().indexOf(t) >= 0);
-    let n = 0;
-    const html = DS.getFeatures().map((g) => {
-      const items = g.items.filter((it) => match(it, g.cat)); n += items.length;
-      return items.length ? `<section class="fgroup"><h2>${esc(g.cat)}</h2><div class="ftiles">${items.map(tile).join('')}</div></section>` : '';
+    const cats = menu();
+    if (!terms.length) return `<div class="mcards">${cats.map((c) => card(c, c.ci === openCat, c.groups)).join('')}</div>`;
+    /* 搜尋：類別或中標題對到 → 整組顯示；否則只留對到的細項。有結果的字卡全部展開 */
+    const hit = (s) => terms.every((t) => s.indexOf(t) >= 0);
+    const html = cats.map((c) => {
+      const groups = c.groups.map((g) => {
+        const head = (c.name + ' ' + g.title).toLowerCase();
+        return { title: g.title, leaves: g.leaves.filter((l) => hit(head + ' ' + l.text)) };
+      }).filter((g) => g.leaves.length);
+      return groups.length ? card(c, true, groups) : '';
     }).join('');
-    return n ? html : `<div class="empty">找不到「${esc(q)}」。<br><button class="btn btn-sm btn-primary" type="button" data-act="open-asla" data-q="${esc(q)}">問問阿斯拉</button></div>`;
+    return html ? `<div class="mcards">${html}</div>` : `<div class="empty">找不到「${esc(q)}」。<br><button class="btn btn-sm btn-primary" type="button" data-act="open-asla" data-q="${esc(q)}">問問阿斯拉</button></div>`;
   }
+  /* 展開的字卡留在原本那一排的開頭、佔滿整排；同一排的其他字卡往下推到下一排。
+   * 用 CSS order 排，欄數（1／2／3）直接讀 grid 算出來的欄數，視窗寬度改變時重排。 */
+  function layoutOpen() {
+    const grid = document.querySelector('#ftiles .mcards'); if (!grid) return;
+    const cards = [...grid.children];
+    const opened = cards.filter((c) => c.classList.contains('open'));
+    if (opened.length !== 1 || cards.length !== (S.MENU || []).length) return;   /* 沒展開或搜尋中：照原順序 */
+    const oi = cards.indexOf(opened[0]);
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+    const rowStart = Math.floor(oi / cols) * cols;
+    cards.forEach((c, k) => { c.style.order = k < rowStart ? k : (k === oi ? rowStart : k + 1); });
+  }
+  window.addEventListener('resize', layoutOpen);
+
   S.views.more = {
     tab: 'more', title: '全部功能',
     render(p) {
+      const o = parseInt(p.get('open'), 10); if (o >= 1 && o <= (S.MENU || []).length) openCat = o - 1;
       return `<div class="page-head"><div><h1>全部功能</h1><p class="muted small">全部都在站內完成，不用跳到其他系統</p></div></div>
-        <div class="searchbar">${S.icon('search')}<input id="more-q" type="search" placeholder="找功能：就貸、宿舍、請假、期中退選…" value="${esc(p.get('q') || '')}" aria-label="搜尋功能"></div>
+        <div class="searchbar">${S.icon('search')}<input id="more-q" type="search" placeholder="找功能：就貸、宿舍、請假、選課清單…" value="${esc(p.get('q') || '')}" aria-label="搜尋功能"></div>
         <div id="ftiles">${renderTiles(p.get('q'))}</div>`;
     },
-    after() { const i = S.$('#more-q'); i.addEventListener('input', () => { S.$('#ftiles').innerHTML = renderTiles(i.value); }); }
+    after() {
+      const i = S.$('#more-q'), box = S.$('#ftiles');
+      layoutOpen();
+      i.addEventListener('input', () => { box.innerHTML = renderTiles(i.value); layoutOpen(); });
+      box.addEventListener('click', (e) => {
+        const h = e.target.closest('.mc-head'); if (!h) return;
+        const ci = +h.dataset.cat;
+        if (i.value.trim()) { i.value = ''; openCat = ci; }       /* 搜尋中點字卡：清掉搜尋，只展開這張 */
+        else openCat = openCat === ci ? -1 : ci;
+        box.innerHTML = renderTiles('');
+        layoutOpen();
+        const el = box.querySelector(`[data-cat="${ci}"]`); if (el) { el.focus(); if (openCat === ci) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+      });
+    }
   };
 
   /* ---------------- 功能示範頁 ---------------- */
@@ -79,9 +187,9 @@
   };
   S.views.p = {
     tab: 'more',
-    title: (sub) => (DS.getFeature(sub) || { name: '功能' }).name,
+    title: (sub) => (S.featureView(DS.getFeature(sub)) || { name: '功能' }).name,
     render(p, sub) {
-      const f = DS.getFeature(sub);
+      const f = S.featureView(DS.getFeature(sub));
       if (!f) return `<div class="empty">找不到這個功能。<br><a class="btn btn-sm" href="#/more">回全部功能</a></div>`;
       const sp = special[f.id] ? special[f.id]() : '';
       const subs = f.subs && f.subs.length ? `<section class="card section"><h3>這一頁之後可以辦理</h3><div class="clist">${f.subs.map((s) => `<button type="button" class="sub-row" data-act="demo-only"><span>${esc(s)}</span>${S.icon('right')}</button>`).join('')}</div></section>` : '';

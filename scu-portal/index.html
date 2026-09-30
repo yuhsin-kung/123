@@ -47,10 +47,11 @@
     <a href="#/more" data-tab="more" data-also="calendar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg><span>全部功能</span></a>
   </nav>
 
-  <!-- 阿斯拉助手：入口在首頁的阿斯拉卡片（js/pages/home.js）。
-       從對話裡點「前往」跳頁後，面板會縮成這顆圓點（可拖），再點就展開回對話。 -->
-  <button id="asla-dot" class="asla-dot" type="button" aria-label="展開阿斯拉對話" hidden>
-    <span class="asla-avatar">阿</span>
+  <!-- 阿斯拉助手：首頁的入口是阿斯拉卡片（js/pages/home.js）；
+       其他頁面右下角固定一隻小機器人（可拖），點它打開對話。機器人圖由 asla.js 放進 .asla-dot-bot。 -->
+  <button id="asla-dot" class="asla-dot" type="button" aria-label="打開阿斯拉 AI 助手" hidden>
+    <span class="asla-dot-label">阿斯拉AI助手</span>
+    <span class="asla-dot-bot"></span>
   </button>
   <section id="asla-panel" class="asla-panel" aria-label="阿斯拉助手" hidden>
     <div class="asla-head">
